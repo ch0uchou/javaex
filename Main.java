@@ -1,22 +1,26 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.event.*;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Main extends JFrame implements ActionListener{
 
     /**
-     * Book
+     * Data
      */ 
+    DataConnect dataConnect = new DataConnect();
+    /**
+     * Data
+     */ 
+
 
     JPanel panelmain, panelleft, panelright, panelrighthome, panelrightsetting, panelrightsell;
     JButton homeButton, settingButton, sellButton, searchButton, crudButton;
     CardLayout rightLayout = new CardLayout();
     TextField searchArea, settingArea;
-
     public void GUI() {
         panelmain = new JPanel(new BorderLayout());
         
@@ -83,28 +87,34 @@ public class Main extends JFrame implements ActionListener{
                 image = imageIcon.getImage();
                 image = image.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
                 imageIcon.setImage(image);
-                sellButton = new JButton(imageIcon);
-                sellButton.setBorderPainted(false);
-                sellButton.setBackground(new Color(240, 238, 227));
-                searchbar.add(sellButton);
+                searchButton = new JButton(imageIcon);
+                searchButton.setBorderPainted(false);
+                searchButton.setBackground(new Color(240, 238, 227));
+                searchbar.add(searchButton);
                 
                 // search result
                 JPanel resulPanel = new JPanel(new FlowLayout());
                 resulPanel.setBackground(new Color(240, 238, 227));
                 // panelrighthome.add(resulPanel, BorderLayout.CENTER);
                 
-                for (int i = 0; i < 50; i++) {
-                    add_one_book(resulPanel, new Book(1,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
-                }
+<<<<<<< HEAD
+=======
+                // for (int i = 0; i < 50; i++) {
+                //     add_one_book(resulPanel, new Book(1,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
+                // }
+                add_all_bookui(resulPanel);
                 resulPanel.setPreferredSize(new Dimension(1100,105*resulPanel.getComponentCount()));
                 
+>>>>>>> a0f878ff68687d56a21af9e9654102d183907957
                 JScrollPane scrollPane = new JScrollPane(resulPanel);
                 scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
                 scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
                 scrollPane.setBounds(100, 50, 110, 650);
                 panelrighthome.add(scrollPane);
+
                 
                 
+            
                 ////       
                 
 
@@ -118,7 +128,7 @@ public class Main extends JFrame implements ActionListener{
                 optionbar.setBackground(new Color(240, 238, 227));
                 panelrightsetting.add(optionbar, BorderLayout.NORTH);
 
-                JLabel inputLabel = new JLabel("Nhập sách mới");
+                JLabel inputLabel = new JLabel("Chọn một mục để tiếp tục");
                 inputLabel.setFont(new Font("Semibold", Font.BOLD, 15));
                 optionbar.add(inputLabel);
 
@@ -136,21 +146,31 @@ public class Main extends JFrame implements ActionListener{
                 
                 
             ///setting 
-                panelrightsell = new JPanel();
+                panelrightsell = new JPanel(new FlowLayout());
+                JLabel a = new JLabel("getName()");
+                panelrightsell.add(a);
                
             
             panelright = new JPanel();
+            
             panelright.setLayout(rightLayout);
-            panelmain.add(panelright);
-            panelright.add(panelrighthome, "1");
-            panelright.add(panelrightsetting, "2");
-            panelright.add(panelrightsell,"3");
-            rightLayout.show(panelright, "1");
+            
+            
+            panelright.add(panelrighthome, "panelrighthome");
+            panelright.add(panelrightsetting, "panelrightsetting");
+            panelright.add(panelrightsell,"panelrightsell");
+            
+            rightLayout.show(panelright, "0");
 
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                rightLayout.show(panelright, "1");
+                rightLayout.show(panelright, "panelrighthome");
+                resulPanel.removeAll();
+                for (int i = 0; i < 50; i++) {
+                    add_one_book(resulPanel, new Book(i,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
+                }
+                resulPanel.setPreferredSize(new Dimension(1100,105*resulPanel.getComponentCount()));
             }
             
         });
@@ -158,7 +178,7 @@ public class Main extends JFrame implements ActionListener{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                rightLayout.show(panelright, "2");
+                rightLayout.show(panelright, "panelrightsetting");
             }
             
         });
@@ -166,11 +186,10 @@ public class Main extends JFrame implements ActionListener{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                rightLayout.show(panelright, "3");
+                rightLayout.show(panelright, "panelrightsell");
             }
             
         });
-
         panelmain.add(panelleft, BorderLayout.WEST);
         panelmain.add(panelright, BorderLayout.CENTER);
         add(panelmain);
@@ -195,9 +214,18 @@ public class Main extends JFrame implements ActionListener{
         image = image.getScaledInstance(190, 200, Image.SCALE_SMOOTH);
         imageIcon.setImage(image);
         JButton label = new JButton(imageIcon);
-        label.setPreferredSize(new Dimension(190, 300));
+        label.setPreferredSize(new Dimension(180, 300));
         label.setBackground(Color.WHITE);
         label.setCursor(new Cursor(12));
+        label.setLabel(Integer.toString(book.get_id()));
+        label.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println(label.getLabel());
+            }
+            
+        });
         newbook.add(label, BorderLayout.WEST);
 
         JPanel discription = new JPanel(new BorderLayout());
@@ -239,6 +267,11 @@ public class Main extends JFrame implements ActionListener{
 
     public void add_all_bookui(JPanel resultPanel){
         resultPanel.removeAll();
+        List<Book> bookList = new ArrayList<Book>();
+        bookList=dataConnect.getBookList();
+        for (Book book : bookList) {
+            add_one_book(resultPanel, book);
+        }
         //// lay du lieu tu database add_one_book
     }
 
