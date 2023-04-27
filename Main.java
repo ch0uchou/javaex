@@ -34,6 +34,7 @@ public class Main extends JFrame implements ActionListener{
             imageIcon.setImage(image);
             homeButton = new JButton(imageIcon);
             homeButton.setPreferredSize(new Dimension(100, 50));
+            homeButton.setBackground(new Color(240, 238, 227));
             homeButton.setBorderPainted(false);
             panelleft.add(homeButton);    
 
@@ -43,6 +44,7 @@ public class Main extends JFrame implements ActionListener{
             imageIcon.setImage(image);
             settingButton = new JButton(imageIcon);
             settingButton.setPreferredSize(new Dimension(100, 50));
+            settingButton.setBackground(new Color(240, 238, 227));
             settingButton.setBorderPainted(false);
             panelleft.add(settingButton);  
 
@@ -52,6 +54,7 @@ public class Main extends JFrame implements ActionListener{
             imageIcon.setImage(image);
             sellButton = new JButton(imageIcon);
             sellButton.setPreferredSize(new Dimension(100, 50));
+            sellButton.setBackground(new Color(240, 238, 227));
             sellButton.setBorderPainted(false);
             panelleft.add(sellButton);
 
