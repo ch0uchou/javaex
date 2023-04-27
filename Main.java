@@ -1,22 +1,26 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.event.*;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Main extends JFrame implements ActionListener{
 
     /**
-     * Book
+     * Data
      */ 
+    DataConnect dataConnect = new DataConnect();
+    /**
+     * Data
+     */ 
+
 
     JPanel panelmain, panelleft, panelright, panelrighthome, panelrightsetting, panelrightsell;
     JButton homeButton, settingButton, sellButton, searchButton, deleteButton, createButton, updateButton;
     CardLayout rightLayout = new CardLayout();
     TextField searchArea, settingArea;
-
     public void GUI() {
         panelmain = new JPanel(new BorderLayout());
         
@@ -93,9 +97,10 @@ public class Main extends JFrame implements ActionListener{
                 resulPanel.setBackground(new Color(240, 238, 227));
                 // panelrighthome.add(resulPanel, BorderLayout.CENTER);
                 
-                for (int i = 0; i < 50; i++) {
-                    add_one_book(resulPanel, new Book(1,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
-                }
+                // for (int i = 0; i < 50; i++) {
+                //     add_one_book(resulPanel, new Book(1,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
+                // }
+                add_all_bookui(resulPanel);
                 resulPanel.setPreferredSize(new Dimension(1100,105*resulPanel.getComponentCount()));
                 
                 JScrollPane scrollPane = new JScrollPane(resulPanel);
@@ -208,6 +213,11 @@ public class Main extends JFrame implements ActionListener{
 
     public void add_all_bookui(JPanel resultPanel){
         resultPanel.removeAll();
+        List<Book> bookList = new ArrayList<Book>();
+        bookList=dataConnect.getBookList();
+        for (Book book : bookList) {
+            add_one_book(resultPanel, book);
+        }
         //// lay du lieu tu database add_one_book
     }
 
