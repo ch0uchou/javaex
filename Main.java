@@ -12,14 +12,15 @@ public class Main extends JFrame implements ActionListener{
      * Book
      */ 
 
-    JPanel panelmain, panelleft, panelrighthome, panelrightsetting, panelrightsell;
+    JPanel panelmain, panelleft, panelright, panelrighthome, panelrightsetting, panelrightsell;
     JButton homeButton, settingButton, sellButton, searchButton, deleteButton, createButton, updateButton;
     CardLayout rightLayout = new CardLayout();
     TextField searchArea, settingArea;
 
     public void GUI() {
         panelmain = new JPanel(new BorderLayout());
-
+        
+        
         // left panel
         panelleft = new JPanel(new FlowLayout());
         panelleft.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.WHITE));
@@ -54,53 +55,95 @@ public class Main extends JFrame implements ActionListener{
             sellButton.setBorderPainted(false);
             panelleft.add(sellButton);
 
-        //right home panel 
-        panelrighthome = new JPanel(new BorderLayout());
 
-            // search bar
-            JPanel searchbar = new JPanel(new FlowLayout());
-            searchbar.setBackground(new Color(240, 238, 227));
-            panelrighthome.add(searchbar, BorderLayout.NORTH);
-
-            JLabel searchLabel = new JLabel("Tìm kiếm :");
-            searchLabel.setFont(new Font("Semibold", Font.PLAIN, 15));
-            searchbar.add(searchLabel);
-
-            searchArea = new TextField("Tìm kiếm id, tên sách, tác giả, ...");
-            searchArea.setFont(new Font("Semibold", Font.PLAIN, 15));
-            searchArea.setBackground(new Color(240, 238, 227));
-            searchbar.add(searchArea);
-
-            imageIcon = new ImageIcon("image/search.png");
-            image = imageIcon.getImage();
-            image = image.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-            imageIcon.setImage(image);
-            sellButton = new JButton(imageIcon);
-            sellButton.setBorderPainted(false);
-            sellButton.setBackground(new Color(240, 238, 227));
-            searchbar.add(sellButton);
-            
-            // search result
-            JPanel resulPanel = new JPanel(new FlowLayout());
-            resulPanel.setBackground(new Color(240, 238, 227));
-            // panelrighthome.add(resulPanel, BorderLayout.CENTER);
-            
-            for (int i = 0; i < 50; i++) {
-                add_one_book(resulPanel, new Book(1,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
-            }
-            resulPanel.setPreferredSize(new Dimension(1100,105*resulPanel.getComponentCount()));
-            
-            JScrollPane scrollPane = new JScrollPane(resulPanel);
-            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-            scrollPane.setBounds(100, 50, 110, 650);
-            panelrighthome.add(scrollPane);
-            ////           
+        // right panel
         
+        
+            //right home panel 
+            panelrighthome = new JPanel(new BorderLayout());
 
+                // search bar
+                JPanel searchbar = new JPanel(new FlowLayout());
+                searchbar.setBackground(new Color(240, 238, 227));
+                panelrighthome.add(searchbar, BorderLayout.NORTH);
+
+                JLabel searchLabel = new JLabel("Tìm kiếm :");
+                searchLabel.setFont(new Font("Semibold", Font.PLAIN, 15));
+                searchbar.add(searchLabel);
+
+                searchArea = new TextField("Tìm kiếm id, tên sách, tác giả, ...");
+                searchArea.setFont(new Font("Semibold", Font.PLAIN, 15));
+                searchArea.setBackground(new Color(240, 238, 227));
+                searchbar.add(searchArea);
+
+                imageIcon = new ImageIcon("image/search.png");
+                image = imageIcon.getImage();
+                image = image.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+                imageIcon.setImage(image);
+                sellButton = new JButton(imageIcon);
+                sellButton.setBorderPainted(false);
+                sellButton.setBackground(new Color(240, 238, 227));
+                searchbar.add(sellButton);
+                
+                // search result
+                JPanel resulPanel = new JPanel(new FlowLayout());
+                resulPanel.setBackground(new Color(240, 238, 227));
+                // panelrighthome.add(resulPanel, BorderLayout.CENTER);
+                
+                for (int i = 0; i < 50; i++) {
+                    add_one_book(resulPanel, new Book(1,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
+                }
+                resulPanel.setPreferredSize(new Dimension(1100,105*resulPanel.getComponentCount()));
+                
+                JScrollPane scrollPane = new JScrollPane(resulPanel);
+                scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+                scrollPane.setBounds(100, 50, 110, 650);
+                panelrighthome.add(scrollPane);
+                ////       
+                
+            ////setting right panel
+                panelrightsetting = new JPanel();
+                
+                
+            ///setting 
+                panelrightsell = new JPanel();
+               
+            
+            panelright = new JPanel();
+            panelright.setLayout(rightLayout);
+            panelmain.add(panelright);
+            panelright.add(panelrighthome, "1");
+            panelright.add(panelrightsetting, "2");
+            panelright.add(panelrightsell,"3");
+            rightLayout.show(panelright, "1");
+
+        homeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                rightLayout.show(panelright, "1");
+            }
+            
+        });
+        settingButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                rightLayout.show(panelright, "2");
+            }
+            
+        });
+        sellButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                rightLayout.show(panelright, "3");
+            }
+            
+        });
 
         panelmain.add(panelleft, BorderLayout.WEST);
-        panelmain.add(panelrighthome, BorderLayout.CENTER);
+        panelmain.add(panelright, BorderLayout.CENTER);
         add(panelmain);
         Dimension prop = new Dimension(1200, 700);
         setMaximumSize(prop);
@@ -110,10 +153,6 @@ public class Main extends JFrame implements ActionListener{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public void add_all_bookui(JPanel resultPanel){
-        resultPanel.removeAll();
-        //// lay du lieu tu database add_one_book
-    }
 
     public void add_one_book(JPanel resulPanel, Book book) {
         JPanel newbook = new JPanel(new BorderLayout());
@@ -163,10 +202,14 @@ public class Main extends JFrame implements ActionListener{
 
     }
 
+
+    public void add_all_bookui(JPanel resultPanel){
+        resultPanel.removeAll();
+        //// lay du lieu tu database add_one_book
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
     }
 
     public Main(String s){
