@@ -95,9 +95,11 @@ public class Main extends JFrame implements ActionListener{
                 // search result
                 JPanel resulPanel = new JPanel(new FlowLayout());
                 resulPanel.setBackground(new Color(240, 238, 227));
-                // panelrighthome.add(resulPanel, BorderLayout.CENTER);
-   
-                
+                JScrollPane scrollPane = new JScrollPane(resulPanel);
+                scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+                scrollPane.setBounds(100, 50, 110, 650);
+                panelrighthome.add(scrollPane);
             
                 ////       
                 
