@@ -6,7 +6,7 @@ import javax.swing.event.*;
 
 
 
-public class test extends JFrame implements ActionListener{
+public class Main extends JFrame implements ActionListener{
 
     /**
      * Book
@@ -169,14 +169,14 @@ public class test extends JFrame implements ActionListener{
         throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
     }
 
-    public test(String s){
+    public Main(String s){
         super(s);
         GUI();
     }
 
 
     public static void main(String[] args) {
-        new test("bai tap java");
+        new Main("bai tap java");
     }
     
 }
