@@ -18,7 +18,7 @@ public class Main extends JFrame implements ActionListener{
 
 
     JPanel panelmain, panelleft, panelright, panelrighthome, panelrightsetting, panelrightsell;
-    JButton homeButton, settingButton, sellButton, searchButton, deleteButton, createButton, updateButton;
+    JButton homeButton, settingButton, sellButton, searchButton, crudButton;
     CardLayout rightLayout = new CardLayout();
     TextField searchArea, settingArea;
     public void GUI() {
@@ -75,7 +75,7 @@ public class Main extends JFrame implements ActionListener{
                 panelrighthome.add(searchbar, BorderLayout.NORTH);
 
                 JLabel searchLabel = new JLabel("Tìm kiếm :");
-                searchLabel.setFont(new Font("Semibold", Font.PLAIN, 15));
+                searchLabel.setFont(new Font("Semibold", Font.BOLD, 15));
                 searchbar.add(searchLabel);
 
                 searchArea = new TextField("Tìm kiếm id, tên sách, tác giả, ...");
@@ -108,10 +108,36 @@ public class Main extends JFrame implements ActionListener{
                 scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
                 scrollPane.setBounds(100, 50, 110, 650);
                 panelrighthome.add(scrollPane);
+                
+                
                 ////       
                 
+
+                
             ////setting right panel
-                panelrightsetting = new JPanel();
+                panelrightsetting = new JPanel(new BorderLayout());
+
+
+                // option bar
+                JPanel optionbar = new JPanel(new FlowLayout());
+                optionbar.setBackground(new Color(240, 238, 227));
+                panelrightsetting.add(optionbar, BorderLayout.NORTH);
+
+                JLabel inputLabel = new JLabel("Nhập sách mới");
+                inputLabel.setFont(new Font("Semibold", Font.BOLD, 15));
+                optionbar.add(inputLabel);
+
+                // settingArea = new TextField();
+                // settingArea.setFont(new Font("Semibold", Font.PLAIN, 15));
+                // settingArea.setColumns(50);
+                // settingArea.setBackground(new Color(240, 238, 227));
+                // optionbar.add(settingArea);
+
+                // crudButton = new JButton("Submit");
+                // crudButton.setFont(new Font("Semibold", Font.BOLD, 15));
+                // crudButton.setBackground(new Color(240, 238, 227));
+                // optionbar.add(crudButton);
+
                 
                 
             ///setting 
@@ -165,23 +191,27 @@ public class Main extends JFrame implements ActionListener{
     public void add_one_book(JPanel resulPanel, Book book) {
         JPanel newbook = new JPanel(new BorderLayout());
         newbook.setPreferredSize(new Dimension(500, 200));
-        newbook.setBackground(new Color(100, 131, 109));
+        newbook.setBackground(new Color(201, 195, 159));
         resulPanel.add(newbook);
 
+        
         ImageIcon imageIcon = new ImageIcon(book.get_url());
         Image image = imageIcon.getImage();
-        image = image.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+        image = image.getScaledInstance(190, 200, Image.SCALE_SMOOTH);
         imageIcon.setImage(image);
-        JLabel label = new JLabel(imageIcon);
+        JButton label = new JButton(imageIcon);
+        label.setPreferredSize(new Dimension(190, 300));
+        label.setBackground(Color.WHITE);
+        label.setCursor(new Cursor(12));
         newbook.add(label, BorderLayout.WEST);
 
         JPanel discription = new JPanel(new BorderLayout());
         discription.setPreferredSize(new Dimension(300, 200));
-        discription.setBackground(new Color(100, 131, 0));
+        discription.setBackground(new Color(201, 195, 159));
         newbook.add(discription);
 
         JTextArea textArea = new JTextArea(book.get_name());
-        textArea.setEditable(false);
+        textArea.setEditable(true);
         textArea.setPreferredSize(new Dimension(300, 62));
         textArea.setFont(new Font("Semibold", Font.BOLD, 18));
         textArea.setLineWrap(true);
@@ -207,6 +237,7 @@ public class Main extends JFrame implements ActionListener{
         textArea2.setWrapStyleWord(true);
         textArea2.setBackground(new Color(201, 195, 159));
         discription.add(textArea2,BorderLayout.SOUTH);
+
 
     }
 
