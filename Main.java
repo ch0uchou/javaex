@@ -96,23 +96,7 @@ public class Main extends JFrame implements ActionListener{
                 JPanel resulPanel = new JPanel(new FlowLayout());
                 resulPanel.setBackground(new Color(240, 238, 227));
                 // panelrighthome.add(resulPanel, BorderLayout.CENTER);
-                
-<<<<<<< HEAD
-=======
-                // for (int i = 0; i < 50; i++) {
-                //     add_one_book(resulPanel, new Book(1,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
-                // }
-                add_all_bookui(resulPanel);
-                resulPanel.setPreferredSize(new Dimension(1100,105*resulPanel.getComponentCount()));
-                
->>>>>>> a0f878ff68687d56a21af9e9654102d183907957
-                JScrollPane scrollPane = new JScrollPane(resulPanel);
-                scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-                scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-                scrollPane.setBounds(100, 50, 110, 650);
-                panelrighthome.add(scrollPane);
-
-                
+   
                 
             
                 ////       
