@@ -28,7 +28,7 @@ public class DataConnect {
 			while(rs.next()) {
                 Book book = new Book(Integer.parseInt(rs.getObject(1).toString()),rs.getObject(2).toString(),rs.getObject(3).toString(),rs.getObject(4).toString(),rs.getObject(5).toString(),Integer.parseInt(rs.getObject(6).toString()),Integer.parseInt(rs.getObject(7).toString()));
                 bookList.add(book);
-                System.out.println(Integer.parseInt(""+rs.getObject(1).toString())+rs.getObject(2).toString()+rs.getObject(3).toString()+rs.getObject(4).toString()+rs.getObject(5).toString()+Integer.parseInt(rs.getObject(6).toString())+Integer.parseInt(rs.getObject(7).toString()));
+//                System.out.println(Integer.parseInt(""+rs.getObject(1).toString())+rs.getObject(2).toString()+rs.getObject(3).toString()+rs.getObject(4).toString()+rs.getObject(5).toString()+Integer.parseInt(rs.getObject(6).toString())+Integer.parseInt(rs.getObject(7).toString()));
 			}
 			rs.close();
 			stmt.close();
@@ -39,6 +39,30 @@ public class DataConnect {
             return null;
         }
     }
+
+    public List<Book> findby(String option, String text){
+
+        //tìm theo thuộc tính
+        try {
+            Statement stmt = con.createStatement();
+			String sql = "SELECT * FROM book WHERE " + option + " LIKE '%" +text+ "%'";
+			ResultSet rs= stmt.executeQuery(sql);
+			ResultSetMetaData rsmd=rs.getMetaData();
+            List<Book> bookList = new ArrayList<Book>();
+			while(rs.next()) {
+                Book book = new Book(Integer.parseInt(rs.getObject(1).toString()),rs.getObject(2).toString(),rs.getObject(3).toString(),rs.getObject(4).toString(),rs.getObject(5).toString(),Integer.parseInt(rs.getObject(6).toString()),Integer.parseInt(rs.getObject(7).toString()));
+                bookList.add(book);
+			}
+			rs.close();
+			stmt.close();
+            return bookList;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public Boolean createBook(Book book) {
         try {
             Statement stmt = con.createStatement();
@@ -75,7 +99,7 @@ public class DataConnect {
     public boolean updateBook(Book book) {
         try {
             Statement stmt = con.createStatement();
-            String sql = "UPDATE book SET name='" + book.get_name() + "', author='" + book.get_author() + "', category='" + book.get_category() + "', url='" + book.get_url() + "', price=" + book.get_price() + ", amount=" + book.get_amount() + " WHERE id=" + book.get_id();
+            String sql = "UPDATE book SET name=" + '"' + book.get_name() + '"'+ ", author='" + book.get_author() + "', category='" + book.get_category() + "', url='" + book.get_url() + "', price=" + book.get_price() + ", amount=" + book.get_amount() + " WHERE id=" + book.get_id();
             int result = stmt.executeUpdate(sql);
             stmt.close();
             return result > 0;
@@ -120,7 +144,7 @@ public class DataConnect {
         int id = 0;
     	try {
             Statement stmt = con.createStatement();
-            String sql = "select count(id) from book";
+            String sql = "select max(id) from book";
             ResultSet rs = stmt.executeQuery(sql);
             if (rs.next()) {
                 id =Integer.parseInt(rs.getObject(1).toString());

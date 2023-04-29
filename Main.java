@@ -13,6 +13,7 @@ import com.mysql.fabric.xmlrpc.base.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 
 public class Main extends JFrame implements ActionListener{
@@ -26,14 +27,17 @@ public class Main extends JFrame implements ActionListener{
      */ 
 
 
-    JPanel panelmain, panelleft, panelright, panelrighthome, panelrightsetting, panelrightsell, createPanel, readPanel, updatePanel, deletePanel, crudPanel;
-    JButton homeButton, settingButton, sellButton, searchButton, createButton, readButton, updateButton, deleteButton, submitButton ;
+    
+    JPanel panelmain, panelleft, panelright, panelrighthome, panelrightsetting, panelrightsell, createPanel, readPanel, updatePanel, deletePanel, crudPanel, delete_detail_Panel;
+    JButton homeButton, settingButton, sellButton, searchButton, createButton, readButton, updateButton, deleteButton, submitButton, search_setting_Button, search_update_Button, submit_update_Button, upload_update_Button, search_delete_Button ;
+    JRadioButton id, name, author, category, price, amount;
     CardLayout rightLayout = new CardLayout();
-    TextField searchArea, settingArea;
-    JTextField name_Field, author_Field, category_Field, price_Field, amount_Field;
+    TextField searchArea, settingArea ;
+    JTextField search_setting_Area, name_Field, author_Field, category_Field, price_Field, amount_Field, name_update_Field, id_update_Field, author_update_Field, category_update_Field, price_update_Field, amount_update_Field, id_delete_Field;
     String path="";
     File selectedimageFile;
-    DefaultTableModel model =new DefaultTableModel(new Object[][] {},new String[] {}) 
+    JLabel update_status, delete_status;
+    DefaultTableModel model_create =new DefaultTableModel(new Object[][] {},new String[] {}) 
                     {
                         Class[] columnTypes = new Class[] {
                             Integer.class, String.class, String.class, String.class, String.class, Integer.class, Integer.class
@@ -42,7 +46,17 @@ public class Main extends JFrame implements ActionListener{
                             return columnTypes[columnIndex];
                         }
                     };
-
+    
+    DefaultTableModel model_read =new DefaultTableModel(new Object[][] {},new String[] {}) 
+    {
+        Class[] columnTypes = new Class[] {
+            Integer.class, String.class, String.class, String.class, String.class, Integer.class, Integer.class
+        };
+        public Class getColumnClass(int columnIndex) {
+            return columnTypes[columnIndex];
+        }
+    };
+    JFrame message = new JFrame("message");
     public void GUI() {
         panelmain = new JPanel(new BorderLayout());
         
@@ -100,7 +114,7 @@ public class Main extends JFrame implements ActionListener{
                 searchLabel.setFont(new Font("Semibold", Font.BOLD, 15));
                 searchbar.add(searchLabel);
 
-                searchArea = new TextField("Tìm kiếm id, tên sách, tác giả, ...");
+                searchArea = new TextField("Tìm kiếm tên sách, tác giả, ...");
                 searchArea.setFont(new Font("Semibold", Font.PLAIN, 15));
                 searchArea.setBackground(new Color(240, 238, 227));
                 searchbar.add(searchArea);
@@ -123,14 +137,8 @@ public class Main extends JFrame implements ActionListener{
                 scrollPane.setBounds(100, 50, 110, 650);
                 scrollPane.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
                 panelrighthome.add(scrollPane);
-            
-//                for (int i = 0; i < 50; i++) {
-//                    add_one_book(resultPanel, new Book(i,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
-//                }
-//                add_one_book(resultPanel, new Book(50,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
-//                resultPanel.setPreferredSize(new Dimension(1100,105*resultPanel.getComponentCount()));
-                 add_all_bookui(resultPanel);
-                ////       
+
+                add_all_bookui(resultPanel);
                 
 
                      /////////////////////////        /////////////////////////        /////////////////////////        /////////////////////////        /////////////////////////        /////////////////////////   
@@ -149,20 +157,397 @@ public class Main extends JFrame implements ActionListener{
                 crudPanel.setBackground(new Color(240, 238, 227));
                 createPanel = new JPanel(new BorderLayout());
                 createPanel.setBackground(new Color(240, 238, 227));
-                // readPanel = new JPanel(new FlowLayout());
-                // readPanel.setBackground(new Color(240, 238, 227));
-                // updatePanel = new JPanel(new FlowLayout());
-                // updatePanel.setBackground(new Color(240, 238, 227));
-                // deletePanel = new JPanel(new FlowLayout());
-                // deletePanel.setBackground(new Color(240, 238, 227));
+                readPanel = new JPanel(new BorderLayout());
+                readPanel.setBackground(new Color(240, 238, 227));
+                updatePanel = new JPanel(new BorderLayout());
+                updatePanel.setBackground(new Color(240, 238, 227));
+                deletePanel = new JPanel(new BorderLayout());
+                deletePanel.setBackground(new Color(240, 238, 227));
                 optPanel.add(crudPanel, "crudPanel");
                 optPanel.add(createPanel, "createPanel");
-                // optPanel.add(readPanel, "readPanel");
-                // optPanel.add(updatePanel, "updatePanel");
-                // optPanel.add(deletePanel,"deletePanel");
+                optPanel.add(readPanel, "readPanel");
+                optPanel.add(updatePanel, "updatePanel");
+                optPanel.add(deletePanel,"deletePanel");
                 optLayout.show(optPanel, "crudPanel");
+
+
+                //// delete panel
+
                 
+                JPanel deletebar = new JPanel(new FlowLayout());
+                deletebar.setBackground(new Color(240, 238, 227));
+                deletebar.setPreferredSize(new Dimension(1000, 50));
+                deletePanel.add(deletebar, BorderLayout.NORTH);
+
+                JLabel delete_Label = new JLabel("Xoá sách");
+                delete_Label.setFont(new Font("Semibold", Font.BOLD, 20));
+                deletebar.add(delete_Label);
+
+                delete_detail_Panel = new JPanel(new FlowLayout());
+                delete_detail_Panel.setPreferredSize(new Dimension(1000, 1150));
+                delete_detail_Panel.setBackground(new Color(240, 238, 227));
+                deletePanel.add(delete_detail_Panel);
+
+
+                JPanel id_delete_panel = new JPanel(new FlowLayout());
+                id_delete_panel.setPreferredSize(new Dimension(1000, 50));
+                id_delete_panel.setBackground(new Color(240, 238, 227));
+                delete_detail_Panel.add(id_delete_panel);
+                JLabel id_delete_Label = new JLabel("Nhập id: ");
+                id_delete_Label.setPreferredSize(new Dimension(150, 50));
+                id_delete_Label.setBackground(new Color(240, 238, 227));
+                id_delete_Label.setFont(new Font("Semibold", Font.PLAIN, 15));
+                id_delete_panel.add(id_delete_Label);
+                id_delete_Field = new JTextField();
+                id_delete_Field.setFont(new Font("Semibold", Font.PLAIN, 15));
+                id_delete_Field.setColumns(25);
+                id_delete_panel.add(id_delete_Field);
+                imageIcon = new ImageIcon("image/search.png");
+                image = imageIcon.getImage();
+                image = image.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+                imageIcon.setImage(image);
+                search_delete_Button = new JButton(imageIcon);
+                search_delete_Button.setBorderPainted(false);
+                search_delete_Button.setBackground(new Color(240, 238, 227));
+                id_delete_panel.add(search_delete_Button);
                 
+                JPanel submit_delete_panel = new JPanel(new FlowLayout());
+                submit_delete_panel.setPreferredSize(new Dimension(1200, 50));
+                submit_delete_panel.setBackground(new Color(240, 238, 227));
+                delete_status = new JLabel("");
+                delete_status.setFont(new Font("Semibold", Font.PLAIN, 15));
+                submit_delete_panel.add(delete_status);
+                delete_detail_Panel.add(submit_delete_panel);
+                
+                search_delete_Button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        delete_status.setText("");
+                        Book book = new Book();
+                        book = dataConnect.getBook(Integer.parseInt(id_delete_Field.getText()));
+                        if (book != null){
+                            JDialog messagedDialog = new JDialog(message, "Xác nhận xoá");
+                            messagedDialog.setVisible(true);
+                            Dimension a = new Dimension(550,270);
+                            messagedDialog.setPreferredSize(a);
+                            messagedDialog.setMaximumSize(a);
+                            messagedDialog.setMinimumSize(a);
+                            JPanel delete_book = new JPanel(new FlowLayout());
+                            delete_book.setPreferredSize(a);
+                            delete_book.setBackground(new Color(240, 238, 227));
+                            add_one_book(delete_book, book);
+                            JButton submit_deleteButton = new JButton("Xoá");
+                            submit_deleteButton.setFont(new Font("Semibold", Font.PLAIN, 15));
+                            delete_book.add(submit_deleteButton);
+                            JButton cancel_deleteButton = new JButton("Huỷ");
+                            cancel_deleteButton.setFont(new Font("Semibold", Font.PLAIN, 15));
+                            delete_book.add(cancel_deleteButton);
+                            ActionListener deleteEvent = new ActionListener() {
+
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    messagedDialog.removeAll();
+                                    messagedDialog.setVisible(false);
+                                    setEnabled(true);
+                                    if (e.getSource() == submit_deleteButton){
+                                        Boolean checkdelete = dataConnect.deleteBook((Integer.parseInt(id_delete_Field.getText())));
+                                        if (checkdelete == true){
+                                            delete_status.setText("Xoá thành công");
+                                        }
+                                        else delete_status.setText("Xoá không thành công");
+                                    }
+                                }
+                                
+                            };
+                            submit_deleteButton.addActionListener(deleteEvent);
+                            cancel_deleteButton.addActionListener(deleteEvent);
+                            messagedDialog.add(delete_book);
+                            setEnabled(false);
+                    }
+                    }
+                });
+
+                ///update panel
+                JPanel updatebar = new JPanel(new FlowLayout());
+                updatebar.setBackground(new Color(240, 238, 227));
+                updatebar.setPreferredSize(new Dimension(1000, 50));
+                updatePanel.add(updatebar, BorderLayout.NORTH);
+
+                JLabel update_Label = new JLabel("Cập nhật sách");
+                update_Label.setFont(new Font("Semibold", Font.BOLD, 20));
+                updatebar.add(update_Label);
+
+                JPanel update_detail_Panel = new JPanel(new FlowLayout());
+                update_detail_Panel.setPreferredSize(new Dimension(1000, 1150));
+                update_detail_Panel.setBackground(new Color(240, 238, 227));
+                updatePanel.add(update_detail_Panel);
+
+
+                JPanel id_update_panel = new JPanel(new FlowLayout());
+                id_update_panel.setPreferredSize(new Dimension(1000, 50));
+                id_update_panel.setBackground(new Color(240, 238, 227));
+                update_detail_Panel.add(id_update_panel);
+                JLabel id_update_Label = new JLabel("Nhập id: ");
+                id_update_Label.setPreferredSize(new Dimension(150, 50));
+                id_update_Label.setBackground(new Color(240, 238, 227));
+                id_update_Label.setFont(new Font("Semibold", Font.PLAIN, 15));
+                id_update_panel.add(id_update_Label);
+                id_update_Field = new JTextField();
+                id_update_Field.setFont(new Font("Semibold", Font.PLAIN, 15));
+                id_update_Field.setColumns(25);
+                id_update_panel.add(id_update_Field);
+                imageIcon = new ImageIcon("image/search.png");
+                image = imageIcon.getImage();
+                image = image.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+                imageIcon.setImage(image);
+                search_update_Button = new JButton(imageIcon);
+                search_update_Button.setBorderPainted(false);
+                search_update_Button.setBackground(new Color(240, 238, 227));
+                search_update_Button.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        active_update();
+                    }
+                    
+                });
+                id_update_panel.add(search_update_Button);
+
+                JPanel name_update_panel = new JPanel(new FlowLayout());
+                name_update_panel.setPreferredSize(new Dimension(1000, 50));
+                name_update_panel.setBackground(new Color(240, 238, 227));
+                update_detail_Panel.add(name_update_panel);
+                JLabel name_update_Label = new JLabel("Tên sách: ");
+                name_update_Label.setPreferredSize(new Dimension(200, 50));
+                name_update_Label.setBackground(new Color(240, 238, 227));
+                name_update_Label.setFont(new Font("Semibold", Font.PLAIN, 15));
+                name_update_panel.add(name_update_Label);
+                name_update_Field = new JTextField();
+                name_update_Field.setFont(new Font("Semibold", Font.PLAIN, 15));
+                name_update_Field.setColumns(50);
+                name_update_Field.setEditable(false);
+                name_update_panel.add(name_update_Field);
+
+                JPanel author_update_panel = new JPanel(new FlowLayout());
+                author_update_panel.setPreferredSize(new Dimension(1000, 50));
+                author_update_panel.setBackground(new Color(240, 238, 227));
+                update_detail_Panel.add(author_update_panel);
+                JLabel author_update_Label = new JLabel("Tác giả: ");
+                author_update_Label.setPreferredSize(new Dimension(200, 50));
+                author_update_Label.setBackground(new Color(240, 238, 227));
+                author_update_Label.setFont(new Font("Semibold", Font.PLAIN, 15));
+                author_update_panel.add(author_update_Label);
+                author_update_Field = new JTextField();
+                author_update_Field.setFont(new Font("Semibold", Font.PLAIN, 15));
+                author_update_Field.setColumns(50);
+                author_update_Field.setEditable(false);
+                author_update_panel.add(author_update_Field);
+
+                JPanel category_update_panel = new JPanel(new FlowLayout());
+                category_update_panel.setPreferredSize(new Dimension(1000, 50));
+                category_update_panel.setBackground(new Color(240, 238, 227));
+                update_detail_Panel.add(category_update_panel);
+                JLabel category_update_Label = new JLabel("Thể loại: ");
+                category_update_Label.setPreferredSize(new Dimension(200, 50));
+                category_update_Label.setBackground(new Color(240, 238, 227));
+                category_update_Label.setFont(new Font("Semibold", Font.PLAIN, 15));
+                category_update_panel.add(category_update_Label);
+                category_update_Field = new JTextField();
+                category_update_Field.setFont(new Font("Semibold", Font.PLAIN, 15));
+                category_update_Field.setColumns(50);
+                category_update_Field.setEditable(false);
+                category_update_panel.add(category_update_Field);
+
+                JPanel price_update_panel = new JPanel(new FlowLayout());
+                price_update_panel.setPreferredSize(new Dimension(1000, 50));
+                price_update_panel.setBackground(new Color(240, 238, 227));
+                update_detail_Panel.add(price_update_panel);
+                JLabel price_update_Label = new JLabel("Giá: ");
+                price_update_Label.setPreferredSize(new Dimension(200, 50));
+                price_update_Label.setBackground(new Color(240, 238, 227));
+                price_update_Label.setFont(new Font("Semibold", Font.PLAIN, 15));
+                price_update_panel.add(price_update_Label);
+                price_update_Field = new JTextField();
+                price_update_Field.setFont(new Font("Semibold", Font.PLAIN, 15));
+                price_update_Field.setColumns(50);
+                price_update_Field.setEditable(false);
+                price_update_panel.add(price_update_Field);
+
+                JPanel amount_update_panel = new JPanel(new FlowLayout());
+                amount_update_panel.setPreferredSize(new Dimension(1000, 50));
+                amount_update_panel.setBackground(new Color(240, 238, 227));
+                update_detail_Panel.add(amount_update_panel);
+                JLabel amount_update_Label = new JLabel("Số lượng: ");
+                amount_update_Label.setPreferredSize(new Dimension(200, 50));
+                amount_update_Label.setBackground(new Color(240, 238, 227));
+                amount_update_Label.setFont(new Font("Semibold", Font.PLAIN, 15));
+                amount_update_panel.add(amount_update_Label);
+                amount_update_Field = new JTextField();
+                amount_update_Field.setFont(new Font("Semibold", Font.PLAIN, 15));
+                amount_update_Field.setColumns(50);
+                amount_update_Field.setEditable(false);
+                amount_update_panel.add(amount_update_Field);
+
+
+                JPanel url_update_panel = new JPanel(new FlowLayout());
+                url_update_panel.setPreferredSize(new Dimension(1200, 160));
+                url_update_panel.setBackground(new Color(240, 238, 227));
+                update_detail_Panel.add(url_update_panel);
+                upload_update_Button = new JButton("Upload");
+                upload_update_Button.setPreferredSize(new Dimension(150, 150));
+                upload_update_Button.setCursor(new Cursor(12));
+                upload_update_Button.setFont(new Font("Semibold", Font.PLAIN, 15));
+                upload_update_Button.setEnabled(false);
+                upload_update_Button.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        JFileChooser file = new JFileChooser(System.getProperty("user.dir"));
+                        file.setMultiSelectionEnabled(false);
+                        FileNameExtensionFilter filter = new FileNameExtensionFilter("*.Images","jpg","gif","png");
+                        file.addChoosableFileFilter(filter);
+                        int result = file.showOpenDialog(null);
+                        if (result == JFileChooser.APPROVE_OPTION){
+                            selectedimageFile = file.getSelectedFile();
+                            path = selectedimageFile.getAbsolutePath();
+                            ImageIcon imageIcon = new ImageIcon(path);
+                            Image image = imageIcon.getImage();
+                            image = image.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+                            imageIcon.setImage(image);
+                            upload_update_Button.setIcon(imageIcon);
+                        }
+                    }
+                });
+                url_update_panel.add(upload_update_Button);
+                JLabel upload_update_Label = new JLabel("Tải ảnh từ máy tính");
+                upload_update_Label.setFont(new Font("Semibold", Font.PLAIN, 15));
+                url_update_panel.add(upload_update_Label);
+
+                JPanel submit_update_panel = new JPanel(new FlowLayout());
+                submit_update_panel.setPreferredSize(new Dimension(1200, 50));
+                submit_update_panel.setBackground(new Color(240, 238, 227));
+                update_detail_Panel.add(submit_update_panel); 
+                submit_update_Button = new JButton("Cập nhật");
+                submit_update_Button.setFont(new Font("Semibold", Font.PLAIN, 15));
+                submit_update_Button.addActionListener(this);
+                submit_update_panel.add(submit_update_Button);
+
+                JPanel submit_updatestatus_panel = new JPanel(new FlowLayout());
+                submit_updatestatus_panel.setPreferredSize(new Dimension(1200, 160));
+                submit_updatestatus_panel.setBackground(new Color(240, 238, 227));
+                update_detail_Panel.add(submit_updatestatus_panel); 
+                update_status = new JLabel();
+                update_status.setFont(new Font("Semibold", Font.PLAIN, 15));
+                submit_updatestatus_panel.add(update_status);
+                
+                //readpanel
+
+                JPanel search_setting_bar = new JPanel(new FlowLayout());
+                search_setting_bar.setBackground(new Color(240, 238, 227));
+                search_setting_bar.setPreferredSize(new Dimension(1000, 100));
+                readPanel.add(search_setting_bar, BorderLayout.NORTH);
+
+                JLabel search_setting_Label = new JLabel("Tìm kiếm :");
+                search_setting_Label.setFont(new Font("Semibold", Font.BOLD, 15));
+                search_setting_bar.add(search_setting_Label);
+
+                search_setting_Area = new JTextField("Tìm kiếm id, tên sách, tác giả, ...");
+                search_setting_Area.setColumns(25);
+                search_setting_Area.setFont(new Font("Semibold", Font.PLAIN, 15));
+                search_setting_Area.setBackground(new Color(240, 238, 227));
+                search_setting_bar.add(search_setting_Area);
+
+                imageIcon = new ImageIcon("image/search.png");
+                image = imageIcon.getImage();
+                image = image.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+                imageIcon.setImage(image);
+                search_setting_Button = new JButton(imageIcon);
+                search_setting_Button.setBorderPainted(false);
+                search_setting_Button.setBackground(new Color(240, 238, 227));
+                search_setting_Button.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        findby();
+                    }
+                    
+                });
+                search_setting_bar.add(search_setting_Button);
+
+                JPanel optional = new JPanel(new GridLayout(1,7));
+                optional.setPreferredSize(new Dimension(1000, 50));
+                optional.setBackground(new Color(240, 238, 227));
+                search_setting_bar.add(optional);
+
+                JLabel optionalLabel = new JLabel("Lọc theo: ");
+                optionalLabel.setFont(new Font("Semibold", Font.PLAIN, 15));
+                optionalLabel.setBackground(new Color(240, 238, 227));
+                optional.add(optionalLabel);
+
+                
+                id = new JRadioButton("Id");
+                id.setFont(new Font("Semibold", Font.PLAIN, 15));
+                optional.add(id);
+                name = new JRadioButton("Tên sách");
+                name.setFont(new Font("Semibold", Font.PLAIN, 15));
+                optional.add(name);
+                author = new JRadioButton("Tên tác giả");
+                author.setFont(new Font("Semibold", Font.PLAIN, 15));
+                optional.add(author);
+                category = new JRadioButton("Thể loại");
+                category.setFont(new Font("Semibold", Font.PLAIN, 15));
+                optional.add(category);
+                price = new JRadioButton("Giá tiền");
+                price.setFont(new Font("Semibold", Font.PLAIN, 15));
+                optional.add(price);
+                amount = new JRadioButton("Số lượng");
+                amount.setFont(new Font("Semibold", Font.PLAIN, 15));
+                optional.add(amount);
+
+                ButtonGroup group = new ButtonGroup();
+                group.add(id);
+                group.add(name);
+                group.add(author);
+                group.add(category);
+                group.add(price);
+                group.add(amount);
+
+
+
+
+                JPanel table_search_Panel = new JPanel(new BorderLayout());
+                table_search_Panel.setPreferredSize(new Dimension(1050, 500));
+                readPanel.add(table_search_Panel, BorderLayout.CENTER);
+                
+                JTable table_search_ = new JTable();
+                table_search_.setModel(model_read);
+                table_search_.setEnabled(false);
+                table_search_.setFont(new Font("Semibold", Font.PLAIN, 15));
+                table_search_.getTableHeader().setFont(new Font("Semibold", Font.BOLD, 18));
+                table_search_.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
+                table_search_.getTableHeader().setBackground(new Color(240, 238, 227));
+                table_search_.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
+                
+                JScrollPane s_p = new JScrollPane(table_search_);
+                s_p.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
+                
+                table_search_Panel.add(s_p,BorderLayout.CENTER);
+                String[] colname = {
+                    "Id",
+                    "Tên sách",
+                    "Tên tác giả",
+                    "Thể loại",
+                    "Đường dẫn hình ảnh",
+                    "Giá",
+                    "Số lượng"
+                };
+                model_read.setColumnIdentifiers(colname);
+                List<Book> bookList = new ArrayList<Book>();
+                bookList=dataConnect.getBookList();
+                add_book_table(model_read, bookList);
+                table_search_.setPreferredScrollableViewportSize(new Dimension(800, 500));
+                table_search_.setRowHeight(25);
+
                 //create Panel
 
                 JPanel createbar = new JPanel(new FlowLayout());
@@ -171,11 +556,11 @@ public class Main extends JFrame implements ActionListener{
                 createPanel.add(createbar, BorderLayout.NORTH);
 
                 JLabel create_Label = new JLabel("Nhập sách");
-                create_Label.setFont(new Font("Semibold", Font.BOLD, 30));
+                create_Label.setFont(new Font("Semibold", Font.BOLD, 20));
                 createbar.add(create_Label);
 
                 JPanel create_detail_Panel = new JPanel(new FlowLayout());
-                create_detail_Panel.setPreferredSize(new Dimension(1000, 1150));
+                create_detail_Panel.setPreferredSize(new Dimension(1000, 1050));
                 create_detail_Panel.setBackground(new Color(240, 238, 227));
 
                 JScrollPane createScrollPane = new JScrollPane(create_detail_Panel);
@@ -291,10 +676,10 @@ public class Main extends JFrame implements ActionListener{
                 url_panel.add(uploadLabel);
 
                 JPanel submit_panel = new JPanel(new FlowLayout());
-                submit_panel.setPreferredSize(new Dimension(1200, 160));
+                submit_panel.setPreferredSize(new Dimension(1200, 60));
                 submit_panel.setBackground(new Color(240, 238, 227));
                 create_detail_Panel.add(submit_panel); 
-                submitButton = new JButton("Submit");
+                submitButton = new JButton("Xác nhận");
                 submitButton.setFont(new Font("Semibold", Font.PLAIN, 15));
                 submitButton.addActionListener(this);
                 submit_panel.add(submitButton);
@@ -302,43 +687,25 @@ public class Main extends JFrame implements ActionListener{
                 JPanel tablePanel = new JPanel(new BorderLayout());
                 tablePanel.setPreferredSize(new Dimension(1050, 500));
                 create_detail_Panel.add(tablePanel);
+                
                 JTable table = new JTable();
-                table.setModel(model);
+                table.setModel(model_create);
                 table.setEnabled(false);
                 table.setFont(new Font("Semibold", Font.PLAIN, 15));
                 table.getTableHeader().setFont(new Font("Semibold", Font.BOLD, 18));
                 table.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
                 table.getTableHeader().setBackground(new Color(240, 238, 227));
-                table.setBackground(new Color(240, 238, 227));
                 table.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
+                
                 JScrollPane sp = new JScrollPane(table);
                 sp.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
-                sp.setPreferredSize(new Dimension(800, 500));
+                
                 tablePanel.add(sp,BorderLayout.CENTER);
-                String[] colname = {
-                    "id",
-                    "name",
-                    "author",
-                    "category",
-                    "url",
-                    "price",
-                    "amount"
-                };
-                model.setColumnIdentifiers(colname);
-                for (int i = 0; i < 100; i++) {
-                    String[] colname1 = {
-                        Integer.toString(i),
-                        "name",
-                        "author",
-                        "category",
-                        "url",
-                        "price",
-                        "amount"
-                    };
-                    model.addRow(colname1);
-                }
+                model_create.setColumnIdentifiers(colname);
+                bookList=dataConnect.getBookList();
+                add_book_table(model_create, bookList);
                 table.setPreferredScrollableViewportSize(new Dimension(800, 500));
-
+                table.setRowHeight(25);
                 
 
 
@@ -392,8 +759,16 @@ public class Main extends JFrame implements ActionListener{
                 readButton.setBackground(new Color(240, 238, 227));
                 readButton.setBorderPainted(false);
                 readButton.setCursor(new Cursor(12));
+                readButton.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        optLayout.show(optPanel, "readPanel");
+                    }
+                    
+                });
                 readPanel.add(readButton);  
-                JLabel readLabel = new JLabel("Đọc");
+                JLabel readLabel = new JLabel("Xem");
                 readLabel.setFont(new Font("Semibold", Font.BOLD, 30));
                 readLabel.setBackground(new Color(240, 238, 227));
                 readPanel.add(readLabel);
@@ -411,6 +786,14 @@ public class Main extends JFrame implements ActionListener{
                 updateButton.setBackground(new Color(240, 238, 227));
                 updateButton.setBorderPainted(false);
                 updateButton.setCursor(new Cursor(12));
+                updateButton.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        optLayout.show(optPanel, "updatePanel");
+                    }
+                    
+                });
                 updatePanel.add(updateButton);  
                 JLabel updateLabel = new JLabel("Cập nhật");
                 updateLabel.setFont(new Font("Semibold", Font.BOLD, 30));
@@ -430,6 +813,14 @@ public class Main extends JFrame implements ActionListener{
                 deleteButton.setBackground(new Color(240, 238, 227));
                 deleteButton.setBorderPainted(false);
                 deleteButton.setCursor(new Cursor(12));
+                deleteButton.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        optLayout.show(optPanel, "deletePanel");
+                    }
+                    
+                });
                 deletePanel.add(deleteButton); 
                 JLabel deleteLabel = new JLabel("Xoá");
                 deleteLabel.setFont(new Font("Semibold", Font.BOLD, 30));
@@ -465,13 +856,7 @@ public class Main extends JFrame implements ActionListener{
             @Override
             public void actionPerformed(ActionEvent e) {
                 rightLayout.show(panelright, "panelrighthome");
-                optLayout.show(optPanel, "crudPanel");
-                
-//                
-//                resultPanel.removeAll();
-//                for (int i = 0; i < 50; i++) {
-//                    add_one_book(resultPanel, new Book(i,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/b/ook.png", 97000, 2));
-//                }
+
 //                resultPanel.setPreferredSize(new Dimension(1100,105*resultPanel.getComponentCount()));
                  add_all_bookui(resultPanel);
             }
@@ -482,6 +867,7 @@ public class Main extends JFrame implements ActionListener{
             @Override
             public void actionPerformed(ActionEvent e) {
                 rightLayout.show(panelright, "panelrightsetting");
+                optLayout.show(optPanel, "crudPanel");
             }
             
         });
@@ -510,7 +896,6 @@ public class Main extends JFrame implements ActionListener{
         newbook.setPreferredSize(new Dimension(500, 200));
         newbook.setBackground(new Color(201, 195, 159));
         resulPanel.add(newbook);
-
         
         ImageIcon imageIcon = new ImageIcon(book.get_url());
         Image image = imageIcon.getImage();
@@ -537,7 +922,7 @@ public class Main extends JFrame implements ActionListener{
         newbook.add(discription);
 
         JTextArea textArea = new JTextArea(book.get_name());
-        textArea.setEditable(true);
+        textArea.setEditable(false);
         textArea.setPreferredSize(new Dimension(300, 62));
         textArea.setFont(new Font("Semibold", Font.BOLD, 18));
         textArea.setLineWrap(true);
@@ -575,21 +960,29 @@ public class Main extends JFrame implements ActionListener{
         for (Book book : bookList) {
             add_one_book(resultPanel, book);
         }
-        resultPanel.setPreferredSize(new Dimension(1100,105*resultPanel.getComponentCount()));
+        resultPanel.setPreferredSize(new Dimension(1100,105*(resultPanel.getComponentCount()+1)));
         //// lay du lieu tu database add_one_book
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == submitButton){
-            Book newbook = new Book();
-            newbook.set_name(name_Field.getText());
-            newbook.set_author(author_Field.getText());
-            newbook.set_category(category_Field.getText());
-            newbook.set_amount(Integer.parseInt(amount_Field.getText()));
-            newbook.set_price(Integer.parseInt(price_Field.getText()));
-            Boolean checkcreate = dataConnect.createBook(newbook);
-           if (checkcreate){
+            add_new_book();
+        }
+        if (e.getSource() == submit_update_Button){
+            update_book();
+        }
+    }
+
+    public void add_new_book(){
+        Book newbook = new Book();
+        newbook.set_name(name_Field.getText());
+        newbook.set_author(author_Field.getText());
+        newbook.set_category(category_Field.getText());
+        newbook.set_amount(Integer.parseInt(amount_Field.getText()));
+        newbook.set_price(Integer.parseInt(price_Field.getText()));
+        Boolean checkcreate = dataConnect.createBook(newbook);
+        if (checkcreate){
                 BufferedImage img;
                 try {
                     img = ImageIO.read(selectedimageFile);
@@ -600,14 +993,106 @@ public class Main extends JFrame implements ActionListener{
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
-           }
-           System.out.println(dataConnect.CountBook());
-        // List<Book> bookList = new ArrayList<Book>();
-        // bookList=dataConnect.getBookList();
-        
+        }
+        List<Book> bookList = new ArrayList<Book>();
+        bookList=dataConnect.getBookList();
+        add_book_table(model_create, bookList);
+        System.out.println(dataConnect.CountBook());
+    }
+
+    public void add_book_table(DefaultTableModel model, List<Book> bookList) {
+        while(model.getRowCount() != 0) {
+            model.removeRow(0);
+        }
+        System.out.println(model.getRowCount());
+        for (Book book : bookList) {
+            String[] row = {
+                Integer.toString(book.get_id()),
+                book.get_name(),
+                book.get_author(),
+                book.get_category(),
+                book.get_url(),
+                Integer.toString(book.get_price()),
+                Integer.toString(book.get_amount())
+            };
+            model.addRow(row);
         }
     }
 
+    public void findby() {
+        List<Book> bookList = new ArrayList<Book>();
+        if (id.isSelected()){
+            bookList = dataConnect.findby("id",search_setting_Area.getText());
+        }
+        if (name.isSelected()){
+            bookList = dataConnect.findby("name",search_setting_Area.getText());
+        }
+        if (author.isSelected()){
+            bookList = dataConnect.findby("author",search_setting_Area.getText());
+        }
+        if (category.isSelected()){
+            bookList = dataConnect.findby("category",search_setting_Area.getText());
+        }
+        if (price.isSelected()){
+            bookList = dataConnect.findby("price",search_setting_Area.getText());
+        }
+        if (amount.isSelected()){
+            bookList = dataConnect.findby("amount",search_setting_Area.getText());
+        }
+        add_book_table(model_read, bookList);
+    }
+
+    public void active_update(){
+        update_status.setText("");
+        Book book = new Book();
+        book = dataConnect.getBook(Integer.parseInt(id_update_Field.getText()));
+        if (book != null){
+            name_update_Field.setText(book.get_name());
+            author_update_Field.setText(book.get_author());
+            category_update_Field.setText(book.get_category());
+            price_update_Field.setText(Integer.toString(book.get_price()));
+            amount_update_Field.setText(Integer.toString(book.get_amount()));
+            ImageIcon imageIcon = new ImageIcon(book.get_url());
+            Image image = imageIcon.getImage();
+            image = image.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+            imageIcon.setImage(image);
+            upload_update_Button.setIcon(imageIcon);
+            name_update_Field.setEditable(true);
+            author_update_Field.setEditable(true);
+            category_update_Field.setEditable(true);
+            price_update_Field.setEditable(true);
+            amount_update_Field.setEditable(true);
+            upload_update_Button.setEnabled(true);
+        }
+    }
+
+    public void update_book() {
+        Book book = new Book(
+            Integer.parseInt(id_update_Field.getText()),
+            name_update_Field.getText(),
+            author_update_Field.getText(),
+            category_update_Field.getText(),
+            "image/b"+id_update_Field.getText()+".png",
+            Integer.parseInt(price_update_Field.getText()),
+            Integer.parseInt(amount_update_Field.getText())
+        );
+        boolean checkupdate = dataConnect.updateBook(book);
+        if (checkupdate == true){
+            update_status.setText("Cập nhật thành công");
+            BufferedImage img;
+                try {
+                    img = ImageIO.read(selectedimageFile);
+                    File newfile = new File("image/b"+Integer.toString(book.get_id())+".png");
+                    ImageIO.write(img, "png", newfile);
+                    System.out.println(newfile.getAbsolutePath());
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+        }
+        else update_status.setText("Cập nhật thất bại");
+        
+    }
 
 
     public Main(String s){
