@@ -31,6 +31,15 @@ public class Main extends JFrame implements ActionListener{
     JTextField name_Field, author_Field, category_Field, price_Field, amount_Field;
     String path="";
     File selectedimageFile;
+    DefaultTableModel model =new DefaultTableModel(new Object[][] {},new String[] {}) 
+                    {
+                        Class[] columnTypes = new Class[] {
+                            Integer.class, String.class, String.class, String.class, String.class, Integer.class, Integer.class
+                        };
+                        public Class getColumnClass(int columnIndex) {
+                            return columnTypes[columnIndex];
+                        }
+                    };
 
     public void GUI() {
         panelmain = new JPanel(new BorderLayout());
@@ -113,12 +122,12 @@ public class Main extends JFrame implements ActionListener{
                 scrollPane.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
                 panelrighthome.add(scrollPane);
             
-                // for (int i = 0; i < 50; i++) {
-                //     add_one_book(resultPanel, new Book(i,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
-                // }
-                // add_one_book(resultPanel, new Book(50,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
-                // resultPanel.setPreferredSize(new Dimension(1100,105*resultPanel.getComponentCount()));
-                add_all_bookui(resultPanel);
+                for (int i = 0; i < 50; i++) {
+                    add_one_book(resultPanel, new Book(i,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
+                }
+                add_one_book(resultPanel, new Book(50,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
+                resultPanel.setPreferredSize(new Dimension(1100,105*resultPanel.getComponentCount()));
+                // add_all_bookui(resultPanel);
                 ////       
                 
 
@@ -139,14 +148,18 @@ public class Main extends JFrame implements ActionListener{
                 createPanel = new JPanel(new BorderLayout());
                 createPanel.setBackground(new Color(240, 238, 227));
                 // readPanel = new JPanel(new FlowLayout());
+                // readPanel.setBackground(new Color(240, 238, 227));
                 // updatePanel = new JPanel(new FlowLayout());
+                // updatePanel.setBackground(new Color(240, 238, 227));
                 // deletePanel = new JPanel(new FlowLayout());
+                // deletePanel.setBackground(new Color(240, 238, 227));
                 optPanel.add(crudPanel, "crudPanel");
                 optPanel.add(createPanel, "createPanel");
                 // optPanel.add(readPanel, "readPanel");
                 // optPanel.add(updatePanel, "updatePanel");
                 // optPanel.add(deletePanel,"deletePanel");
                 optLayout.show(optPanel, "crudPanel");
+                
                 
                 //create Panel
 
@@ -287,15 +300,6 @@ public class Main extends JFrame implements ActionListener{
                 JPanel tablePanel = new JPanel(new BorderLayout());
                 tablePanel.setPreferredSize(new Dimension(1050, 500));
                 create_detail_Panel.add(tablePanel);
-                DefaultTableModel model =new DefaultTableModel(new Object[][] {},new String[] {}) 
-                    {
-                        Class[] columnTypes = new Class[] {
-                            Integer.class, String.class, String.class, String.class, String.class, Integer.class, Integer.class
-                        };
-                        public Class getColumnClass(int columnIndex) {
-                            return columnTypes[columnIndex];
-                        }
-                    };
                 JTable table = new JTable();
                 table.setModel(model);
                 table.setEnabled(false);
@@ -333,7 +337,6 @@ public class Main extends JFrame implements ActionListener{
                 }
                 table.setPreferredScrollableViewportSize(new Dimension(800, 500));
 
-
                 
 
 
@@ -363,7 +366,6 @@ public class Main extends JFrame implements ActionListener{
                 createButton.setAlignmentY(200);
                 createButton.setCursor(new Cursor(12));
                 createButton.addActionListener(new ActionListener() {
-
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         optLayout.show(optPanel, "createPanel");
@@ -433,6 +435,9 @@ public class Main extends JFrame implements ActionListener{
                 deletePanel.add(deleteLabel);
                 
 
+
+                
+
                /////////////////////////        /////////////////////////        /////////////////////////        /////////////////////////        /////////////////////////
 
                 
@@ -458,15 +463,15 @@ public class Main extends JFrame implements ActionListener{
             @Override
             public void actionPerformed(ActionEvent e) {
                 rightLayout.show(panelright, "panelrighthome");
+                optLayout.show(optPanel, "crudPanel");
                 
                 
-                
-                // resultPanel.removeAll();
-                // for (int i = 0; i < 50; i++) {
-                //     add_one_book(resultPanel, new Book(i,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/b/ook.png", 97000, 2));
-                // }
-                // resultPanel.setPreferredSize(new Dimension(1100,105*resultPanel.getComponentCount()));
-                add_all_bookui(resultPanel);
+                resultPanel.removeAll();
+                for (int i = 0; i < 50; i++) {
+                    add_one_book(resultPanel, new Book(i,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/b/ook.png", 97000, 2));
+                }
+                resultPanel.setPreferredSize(new Dimension(1100,105*resultPanel.getComponentCount()));
+                // add_all_bookui(resultPanel);
             }
             
         });
@@ -581,12 +586,12 @@ public class Main extends JFrame implements ActionListener{
             newbook.set_category(category_Field.getText());
             newbook.set_amount(Integer.parseInt(amount_Field.getText()));
             newbook.set_price(Integer.parseInt(price_Field.getText()));
-            Boolean checkcreate = dataConnect.createBook(newbook);
-            if (checkcreate == true){
+            int checkcreate = dataConnect.createBook(newbook);
+            if (checkcreate != -1 ){
                 BufferedImage img;
                 try {
                     img = ImageIO.read(selectedimageFile);
-                    File newfile = new File("image/book.png");
+                    File newfile = new File("image/b"+checkcreate+".png");
                     ImageIO.write(img, "png", newfile);
                     System.out.println(newfile.getAbsolutePath());
                 } catch (IOException e1) {
@@ -594,7 +599,9 @@ public class Main extends JFrame implements ActionListener{
                     e1.printStackTrace();
                 }
             }
-
+        // List<Book> bookList = new ArrayList<Book>();
+        // bookList=dataConnect.getBookList();
+        
         }
     }
 

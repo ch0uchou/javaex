@@ -39,16 +39,18 @@ public class DataConnect {
             return null;
         }
     }
-    public boolean createBook(Book book) {
+    public int createBook(Book book) {
         try {
             Statement stmt = con.createStatement();
             String sql = "INSERT INTO book (name, author, category, url, price, amount) VALUES ('" + book.get_name() + "', '" + book.get_author() + "', '" + book.get_category() + "', '" + book.get_url() + "', " + book.get_price() + ", " + book.get_amount() + ")";
             int result = stmt.executeUpdate(sql);
+            sql = "SELECT MAX(id) FROM book";
+            ResultSet rs= stmt.executeQuery(sql);
             stmt.close();
-            return result > 0;
+            return Integer.parseInt(rs.getObject(1).toString());
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return -1;
         }
     }
     public Book getBook(int id) {
