@@ -9,6 +9,8 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
+import com.mysql.fabric.xmlrpc.base.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,12 +124,12 @@ public class Main extends JFrame implements ActionListener{
                 scrollPane.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
                 panelrighthome.add(scrollPane);
             
-                for (int i = 0; i < 50; i++) {
-                    add_one_book(resultPanel, new Book(i,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
-                }
-                add_one_book(resultPanel, new Book(50,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
-                resultPanel.setPreferredSize(new Dimension(1100,105*resultPanel.getComponentCount()));
-                // add_all_bookui(resultPanel);
+//                for (int i = 0; i < 50; i++) {
+//                    add_one_book(resultPanel, new Book(i,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
+//                }
+//                add_one_book(resultPanel, new Book(50,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/book.png", 97000, 2));
+//                resultPanel.setPreferredSize(new Dimension(1100,105*resultPanel.getComponentCount()));
+                 add_all_bookui(resultPanel);
                 ////       
                 
 
@@ -465,13 +467,13 @@ public class Main extends JFrame implements ActionListener{
                 rightLayout.show(panelright, "panelrighthome");
                 optLayout.show(optPanel, "crudPanel");
                 
-                
-                resultPanel.removeAll();
-                for (int i = 0; i < 50; i++) {
-                    add_one_book(resultPanel, new Book(i,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/b/ook.png", 97000, 2));
-                }
-                resultPanel.setPreferredSize(new Dimension(1100,105*resultPanel.getComponentCount()));
-                // add_all_bookui(resultPanel);
+//                
+//                resultPanel.removeAll();
+//                for (int i = 0; i < 50; i++) {
+//                    add_one_book(resultPanel, new Book(i,"Drama nuôi tôi lớn Loài người dạy tôi khôn","Pương Pương", "Tiểu Thuyết", "image/b/ook.png", 97000, 2));
+//                }
+//                resultPanel.setPreferredSize(new Dimension(1100,105*resultPanel.getComponentCount()));
+                 add_all_bookui(resultPanel);
             }
             
         });
@@ -586,19 +588,20 @@ public class Main extends JFrame implements ActionListener{
             newbook.set_category(category_Field.getText());
             newbook.set_amount(Integer.parseInt(amount_Field.getText()));
             newbook.set_price(Integer.parseInt(price_Field.getText()));
-            int checkcreate = dataConnect.createBook(newbook);
-            if (checkcreate != -1 ){
+            Boolean checkcreate = dataConnect.createBook(newbook);
+           if (checkcreate){
                 BufferedImage img;
                 try {
                     img = ImageIO.read(selectedimageFile);
-                    File newfile = new File("image/b"+checkcreate+".png");
+                    File newfile = new File("image/b"+Integer.toString(dataConnect.CountBook())+".png");
                     ImageIO.write(img, "png", newfile);
                     System.out.println(newfile.getAbsolutePath());
                 } catch (IOException e1) {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
-            }
+           }
+           System.out.println(dataConnect.CountBook());
         // List<Book> bookList = new ArrayList<Book>();
         // bookList=dataConnect.getBookList();
         
