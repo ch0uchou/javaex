@@ -1,10 +1,13 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 public class DataConnect {
     private Connection con;
@@ -66,7 +69,7 @@ public class DataConnect {
     public Boolean createBook(Book book) {
         try {
             Statement stmt = con.createStatement();
-            int count = CountBook() + 1;
+            int count = FindBookid() + 1;
             String sql = "INSERT INTO book VALUES (" + count + ",'" + book.get_name() + "', '" + book.get_author() + "', '" + book.get_category() + "', 'image/b" +count + ".png', " + book.get_price() + ", " + book.get_amount() + ")";
             int result = stmt.executeUpdate(sql);
             stmt.close();
@@ -140,7 +143,7 @@ public class DataConnect {
             return false; // Cập nhật không thành công
         }
     }
-    public int CountBook() {
+    public int FindBookid() {
         int id = 0;
     	try {
             Statement stmt = con.createStatement();
@@ -156,4 +159,35 @@ public class DataConnect {
         }
         return id;
     }
+    public int Countid() {
+        int id = 0;
+    	try {
+            Statement stmt = con.createStatement();
+            String sql = "select count(id) from book";
+            ResultSet rs = stmt.executeQuery(sql);
+            if (rs.next()) {
+                id =Integer.parseInt(rs.getObject(1).toString());
+            }
+                rs.close();
+                stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
+    public boolean login(String username, String password) {
+        try {
+            PreparedStatement stmt = con.prepareStatement("SELECT * FROM user WHERE username = ? AND password = ?");
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
+            boolean found = rs.next();
+            rs.close();
+            stmt.close();
+            return found;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; 
+        }
+    }    
 }

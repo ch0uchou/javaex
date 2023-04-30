@@ -986,7 +986,7 @@ public class Test1 extends JFrame implements ActionListener{
                 BufferedImage img;
                 try {
                     img = ImageIO.read(selectedimageFile);
-                    File newfile = new File("image/b"+Integer.toString(dataConnect.CountBook())+".png");
+                    File newfile = new File("image/b"+Integer.toString(dataConnect.Countid())+".png");
                     ImageIO.write(img, "png", newfile);
                     System.out.println(newfile.getAbsolutePath());
                 } catch (IOException e1) {
@@ -997,7 +997,7 @@ public class Test1 extends JFrame implements ActionListener{
         List<Book> bookList = new ArrayList<Book>();
         bookList=dataConnect.getBookList();
         add_book_table(model_create, bookList);
-        System.out.println(dataConnect.CountBook());
+        System.out.println(dataConnect.Countid());
     }
 
     public void add_book_table(DefaultTableModel model, List<Book> bookList) {

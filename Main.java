@@ -6,14 +6,20 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
- import com.mysql.fabric.xmlrpc.base.Data;
+import com.mysql.fabric.xmlrpc.base.Data;
 
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
-import java.util.Vector;
 
 
 public class Main extends JFrame implements ActionListener{
@@ -28,15 +34,15 @@ public class Main extends JFrame implements ActionListener{
 
 
     
-    JPanel panelmain, panelleft, panelright, panelrighthome, panelrightsetting, panelrightsell, createPanel, readPanel, updatePanel, deletePanel, crudPanel, delete_detail_Panel;
-    JButton homeButton, settingButton, sellButton, searchButton, createButton, readButton, updateButton, deleteButton, submitButton, search_setting_Button, search_update_Button, submit_update_Button, upload_update_Button, search_delete_Button ;
+    JPanel panelmain, panelleft, panelright, panelrighthome, panelrightsetting, panelrightsell, createPanel, readPanel, updatePanel, deletePanel, crudPanel, delete_detail_Panel, optPanel;
+    JButton homeButton, settingButton, sellButton, searchButton, createButton, readButton, updateButton, deleteButton, submitButton, search_setting_Button, search_update_Button, submit_update_Button, upload_update_Button, search_delete_Button, submit_sell_Button ;
     JRadioButton id, name, author, category, price, amount;
-    CardLayout rightLayout = new CardLayout();
+    CardLayout rightLayout = new CardLayout(),optLayout;
     TextField searchArea, settingArea ;
     JTextField search_setting_Area, name_Field, author_Field, category_Field, price_Field, amount_Field, name_update_Field, id_update_Field, author_update_Field, category_update_Field, price_update_Field, amount_update_Field, id_delete_Field;
     String path="";
     File selectedimageFile;
-    JLabel update_status, delete_status;
+    JLabel update_status, delete_status, status_sell_Lable;
     DefaultTableModel model_create =new DefaultTableModel(new Object[][] {},new String[] {}) 
                     {
                         Class[] columnTypes = new Class[] {
@@ -56,8 +62,24 @@ public class Main extends JFrame implements ActionListener{
             return columnTypes[columnIndex];
         }
     };
+    DefaultTableModel model_sell =new DefaultTableModel(new Object[][] {},new String[] {}) 
+    {
+        Class[] columnTypes = new Class[] {
+            Integer.class, String.class, String.class, String.class, String.class, Integer.class, Integer.class, String.class, Integer.class, String.class
+        };
+        public boolean isCellEditable(int row, int column) {
+            return column == 8 ? true : false;
+        }
+        public Class getColumnClass(int columnIndex) {
+            return columnTypes[columnIndex];
+        }
+    };
     JFrame message = new JFrame("message");
+    JTable table_sell;
+    int selling=0;
+
     public void GUI() {
+        System.out.println(dataConnect.login("staff1", "111"));
         panelmain = new JPanel(new BorderLayout());
         
         
@@ -110,23 +132,9 @@ public class Main extends JFrame implements ActionListener{
                 searchbar.setBackground(new Color(240, 238, 227));
                 panelrighthome.add(searchbar, BorderLayout.NORTH);
 
-                JLabel searchLabel = new JLabel("Tìm kiếm :");
-                searchLabel.setFont(new Font("Semibold", Font.BOLD, 15));
+                JLabel searchLabel = new JLabel("Trang chủ ");
+                searchLabel.setFont(new Font("Semibold", Font.BOLD, 30));
                 searchbar.add(searchLabel);
-
-                searchArea = new TextField("Tìm kiếm tên sách, tác giả, ...");
-                searchArea.setFont(new Font("Semibold", Font.PLAIN, 15));
-                searchArea.setBackground(new Color(240, 238, 227));
-                searchbar.add(searchArea);
-
-                imageIcon = new ImageIcon("image/search.png");
-                image = imageIcon.getImage();
-                image = image.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-                imageIcon.setImage(image);
-                searchButton = new JButton(imageIcon);
-                searchButton.setBorderPainted(false);
-                searchButton.setBackground(new Color(240, 238, 227));
-                searchbar.add(searchButton);
                 
                 // search result
                 JPanel resultPanel = new JPanel(new FlowLayout());
@@ -150,8 +158,8 @@ public class Main extends JFrame implements ActionListener{
                 
                 // option panel
 
-                CardLayout optLayout = new CardLayout();
-                JPanel optPanel = new JPanel(optLayout);
+                optLayout = new CardLayout();
+                optPanel = new JPanel(optLayout);
                 panelrightsetting.add(optPanel);
                 crudPanel = new JPanel(new BorderLayout());
                 crudPanel.setBackground(new Color(240, 238, 227));
@@ -251,8 +259,15 @@ public class Main extends JFrame implements ActionListener{
                                     setEnabled(true);
                                     if (e.getSource() == submit_deleteButton){
                                         Boolean checkdelete = dataConnect.deleteBook((Integer.parseInt(id_delete_Field.getText())));
+                                        File file = new File("image/b"+id_delete_Field.getText()+".png");
+                                        if (file.delete()) System.out.println("xoa r ne");
+                                        else System.out.println("chua xoa duoc ");
                                         if (checkdelete == true){
                                             delete_status.setText("Xoá thành công");
+                                            List<Book> bookList = dataConnect.getBookList();
+                                            selling_update(model_sell, bookList);
+                                            add_book_table(model_read, bookList);
+                                            add_book_table(model_create, bookList);
                                         }
                                         else delete_status.setText("Xoá không thành công");
                                     }
@@ -511,8 +526,6 @@ public class Main extends JFrame implements ActionListener{
                 group.add(category);
                 group.add(price);
                 group.add(amount);
-
-
 
 
                 JPanel table_search_Panel = new JPanel(new BorderLayout());
@@ -836,16 +849,188 @@ public class Main extends JFrame implements ActionListener{
                 
                 
             ///Selling 
-                panelrightsell = new JPanel(new FlowLayout());
-                JLabel a = new JLabel("chưa làm chẳng có moẹ gì cả");
-                panelrightsell.add(a);
-               
+                panelrightsell = new JPanel(new BorderLayout());
+                panelrightsell.setBackground(new Color(0, 238, 227));
+
+                
+                JPanel sellingbar = new JPanel(new FlowLayout());
+                sellingbar.setBackground(new Color(240, 238, 227));
+                sellingbar.setPreferredSize(new Dimension(1000, 100));
+                panelrightsell.add(sellingbar, BorderLayout.NORTH);
+
+                JLabel selling_Label = new JLabel("Đặt sách");
+                selling_Label.setFont(new Font("Semibold", Font.BOLD, 20));
+                sellingbar.add(selling_Label);
+
+                JPanel submit_sellPanel = new JPanel(new FlowLayout());
+                submit_sellPanel.setBackground(new Color(240, 238, 227));
+                submit_sellPanel.setPreferredSize(new Dimension(1500, 30));
+                sellingbar.add(submit_sellPanel);
+                submit_sell_Button = new JButton("Xác nhận đặt");
+                submit_sell_Button.setFont(new Font("Semibold", Font.BOLD, 15));
+                submit_sell_Button.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (selling > 0){
+                        boolean check_update = false;
+                        for (int i = 0;  i < table_sell.getRowCount() - 1; i++) {
+                            check_update = dataConnect.updateBookSoldAmount(Integer.parseInt(table_sell.getValueAt(i, 0).toString()), Integer.parseInt(table_sell.getValueAt(i, 8).toString()));
+                            if (check_update == false) {
+                                status_sell_Lable.setText("Đặt thất bại");
+                                break;
+                            }
+                        }
+                        List<Book> listBooks = dataConnect.getBookList();
+                        if (check_update == true) {
+                            status_sell_Lable.setText("Đặt thành công");
+                            selling_update(model_sell, listBooks);
+                            add_book_table(model_read, listBooks);
+                            add_book_table(model_create, listBooks);
+                        }
+                    }}
+                    
+                });
+                submit_sellPanel.add(submit_sell_Button);
+
+                JPanel status_sellPanel = new JPanel(new FlowLayout());
+                status_sellPanel.setBackground(new Color(240, 238, 227));
+                status_sellPanel.setPreferredSize(new Dimension(1500, 30));
+                sellingbar.add(status_sellPanel);
+                status_sell_Lable = new JLabel("");
+                status_sell_Lable.setFont(new Font("Semibold", Font.BOLD, 15));
+                status_sellPanel.add(status_sell_Lable);
+
+
+                JPanel table_sellPanel = new JPanel(new BorderLayout());
+                table_sellPanel.setPreferredSize(new Dimension(1050, 500));
+                panelrightsell.add(table_sellPanel, BorderLayout.CENTER);
+                
+                table_sell = new JTable(){};
+                
+                table_sell.setModel(model_sell);
+                table_sell.setCellSelectionEnabled(true);
+                
+                TableModelListener tableModelListener = new TableModelListener() {
+
+                    @Override
+                    public void tableChanged(TableModelEvent e) {
+
+                        if (e.getType() == TableModelEvent.UPDATE) {
+                            
+                            int row = e.getFirstRow();
+                            int col = e.getColumn();
+                            if (col == 8 && row < table_sell.getRowCount()-1){
+                                if (Integer.parseInt(table_sell.getValueAt(row, col).toString()) < 0 )
+                                {    
+                                    table_sell.setValueAt(0, row, col);
+                                    // table_sell.setValueAt(0, table_sell.getRowCount() -1, 8);
+                                }
+                                if (Integer.parseInt(table_sell.getValueAt(row, col).toString()) > Integer.parseInt(table_sell.getValueAt(row, 6).toString()))
+                                {    
+                                    int x = Integer.parseInt(table_sell.getValueAt(row, 6).toString());
+                                    table_sell.setValueAt(x, row, col);
+                                    // table_sell.setValueAt(0, table_sell.getRowCount() -1, 8);
+                                }
+                                if (table_sell.getRowCount() - 1 == dataConnect.Countid()){
+                                    selling = 0;
+                                    for (int i = 0; i < table_sell.getRowCount() - 1; i++) {
+                                        selling += Integer.parseInt(table_sell.getValueAt(i, 5).toString())* Integer.parseInt(table_sell.getValueAt(i, 8).toString());
+                                    }
+                                    // System.out.println(selling);
+                                }
+                            }   
+                            if (table_sell.getRowCount() - 1 == dataConnect.Countid() && Integer.parseInt(table_sell.getValueAt(dataConnect.Countid(), 8).toString()) != selling)
+                            {
+                                table_sell.setValueAt(selling, dataConnect.Countid(), 8);
+                            }
+                        }
+                    }
+                };
             
+                table_sell.getModel().addTableModelListener(tableModelListener);
+                
+                table_sell.addMouseListener(new MouseAdapter() {
+                    public void mouseClicked(MouseEvent e) {
+                        JTable target = (JTable)e.getSource();
+                        int row = target.getSelectedRow();
+                        int column = target.getSelectedColumn();
+                        if (e.getClickCount() == 2) {
+                            if (column == 7 && row < table_sell.getRowCount() -1 )
+                                table_sell.setValueAt(Integer.parseInt(table_sell.getValueAt(row, 8).toString()) + 1, row, 8);
+                            // System.out.println(target.getValueAt(row, column));
+                            if (column == 9 && row < table_sell.getRowCount() -1)
+                                table_sell.setValueAt(Integer.parseInt(table_sell.getValueAt(row, 8).toString()) - 1, row, 8);
+                        }
+                    }
+                });
+
+                
+                table_sell.setFont(new Font("Semibold", Font.PLAIN, 15));
+                table_sell.getTableHeader().setFont(new Font("Semibold", Font.BOLD, 18));
+                table_sell.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
+                table_sell.getTableHeader().setBackground(new Color(240, 238, 227));
+                table_sell.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
+                
+                JScrollPane sp_sell = new JScrollPane(table_sell);
+                sp_sell.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
+                
+                table_sellPanel.add(sp_sell,BorderLayout.CENTER);
+                model_sell.setColumnIdentifiers(new String[]{
+                    "Id",
+                    "Tên sách",
+                    "Tác giả",
+                    "Thể loại",
+                    "Đường link hình ảnh",
+                    "Đơn giá",
+                    "Số lượng trong kho",
+                    "",
+                    "Số lượng mua",
+                    ""
+                });
+                bookList = dataConnect.getBookList();
+                selling_update(model_sell, bookList);
+                System.out.println(table_sell.isCellEditable(bookList.size(), 8));
+                DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+                centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+                table_sell.getColumnModel().getColumn(7).setCellRenderer(centerRenderer);
+                table_sell.getColumnModel().getColumn(8).setCellRenderer(centerRenderer);
+                table_sell.getColumnModel().getColumn(9).setCellRenderer(centerRenderer);
+                table_sell.setPreferredScrollableViewportSize(new Dimension(800, 500));
+                table_sell.setRowHeight(25);
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             panelright = new JPanel();
-            
             panelright.setLayout(rightLayout);
-            
-            
             panelright.add(panelrighthome, "panelrighthome");
             panelright.add(panelrightsetting, "panelrightsetting");
             panelright.add(panelrightsell,"panelrightsell");
@@ -911,6 +1096,10 @@ public class Main extends JFrame implements ActionListener{
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println(label.getLabel());
+                rightLayout.show(panelright, "panelrightsetting");
+                optLayout.show(optPanel, "updatePanel");
+                id_update_Field.setText(label.getLabel());
+                active_update();
             }
             
         });
@@ -987,18 +1176,22 @@ public class Main extends JFrame implements ActionListener{
                 BufferedImage img;
                 try {
                     img = ImageIO.read(selectedimageFile);
-                    File newfile = new File("image/b"+Integer.toString(dataConnect.CountBook())+".png");
+                    File newfile = new File("image/b"+Integer.toString(dataConnect.FindBookid())+".png");
                     ImageIO.write(img, "png", newfile);
                     System.out.println(newfile.getAbsolutePath());
                 } catch (IOException e1) {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
+                List<Book> bookList = dataConnect.getBookList();
+                selling_update(model_sell, bookList);
+                add_book_table(model_read, bookList);
+                add_book_table(model_create, bookList);
         }
         List<Book> bookList = new ArrayList<Book>();
         bookList=dataConnect.getBookList();
         add_book_table(model_create, bookList);
-        System.out.println(dataConnect.CountBook());
+        System.out.println(dataConnect.FindBookid());
     }
 
     public void add_book_table(DefaultTableModel model, List<Book> bookList) {
@@ -1090,6 +1283,10 @@ public class Main extends JFrame implements ActionListener{
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
+            List<Book> bookList = dataConnect.getBookList();
+            selling_update(model_sell, bookList);
+            add_book_table(model_read, bookList);
+            add_book_table(model_create, bookList);
         }
         else update_status.setText("Cập nhật thất bại");
         
@@ -1102,6 +1299,27 @@ public class Main extends JFrame implements ActionListener{
         }
         return s;
     }
+    public void selling_update(DefaultTableModel model_sell, List<Book> bookList) {
+        add_book_table(model_sell, bookList);
+        for (int i = 0; i < bookList.size(); i++) {
+            table_sell.setValueAt("+", i, 7);
+            table_sell.setValueAt(0, i, 8);
+            table_sell.setValueAt("-", i, 9);
+        }
+        model_sell.addRow(new String[]{
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Tổng cộng",
+            "0",
+        });
+    }
+
+
     public Main(String s){
         super(s);
         GUI();
