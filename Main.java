@@ -1002,33 +1002,6 @@ public class Main extends JFrame implements ActionListener{
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             panelright = new JPanel();
             panelright.setLayout(rightLayout);
             panelright.add(panelrighthome, "panelrighthome");
