@@ -9,7 +9,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
-import com.mysql.fabric.xmlrpc.base.Data;
+ import com.mysql.fabric.xmlrpc.base.Data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1095,7 +1095,13 @@ public class Main extends JFrame implements ActionListener{
         
     }
 
-
+    public int getTotal(List<Book> books,List<Integer> sl) {
+        int s=0;
+        for (int i = 0; i < books.size(); i++) {
+            s+=books.get(i).get_price()*sl.get(i);
+        }
+        return s;
+    }
     public Main(String s){
         super(s);
         GUI();
