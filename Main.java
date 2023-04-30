@@ -873,24 +873,14 @@ public class Main extends JFrame implements ActionListener{
                     public void actionPerformed(ActionEvent e) {
                         if (selling > 0){
                         boolean check_update = false;
-                        List<Book> listBooks = new ArrayList<Book>();
                         for (int i = 0;  i < table_sell.getRowCount() - 1; i++) {
-                            Book book = new Book(
-                                Integer.parseInt(table_sell.getValueAt(i, 0).toString()),
-                                table_sell.getValueAt(i, 1).toString(),
-                                table_sell.getValueAt(i, 2).toString(),
-                                table_sell.getValueAt(i, 3).toString(),
-                                table_sell.getValueAt(i, 4).toString(),
-                                Integer.parseInt(table_sell.getValueAt(i, 5).toString()),
-                                Integer.parseInt(table_sell.getValueAt(i, 6).toString()) - Integer.parseInt(table_sell.getValueAt(i, 8).toString())
-                            );
-                            check_update = dataConnect.updateBook(book);
+                            check_update = dataConnect.updateBookSoldAmount(Integer.parseInt(table_sell.getValueAt(i, 0).toString()), Integer.parseInt(table_sell.getValueAt(i, 8).toString()));
                             if (check_update == false) {
                                 status_sell_Lable.setText("Đặt thất bại");
                                 break;
                             }
-                            listBooks.add(book);
                         }
+                        List<Book> listBooks = dataConnect.getBookList();
                         if (check_update == true) {
                             status_sell_Lable.setText("Đặt thành công");
                             selling_update(model_sell, listBooks);
