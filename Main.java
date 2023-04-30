@@ -9,11 +9,9 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
-import com.mysql.fabric.xmlrpc.base.Data;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 
 public class Main extends JFrame implements ActionListener{
@@ -251,6 +249,9 @@ public class Main extends JFrame implements ActionListener{
                                     setEnabled(true);
                                     if (e.getSource() == submit_deleteButton){
                                         Boolean checkdelete = dataConnect.deleteBook((Integer.parseInt(id_delete_Field.getText())));
+                                        File file = new File("image/b"+id_delete_Field.getText()+".png");
+                                        if (file.delete()) System.out.println("xoa r ne");
+                                        else System.out.println("chua xoa duoc ");
                                         if (checkdelete == true){
                                             delete_status.setText("Xoá thành công");
                                         }
