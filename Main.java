@@ -34,15 +34,16 @@ public class Main extends JFrame implements ActionListener{
 
 
     
-    JPanel panelmain, panelleft, panelright, panelrighthome, panelrightsetting, panelrightsell, createPanel, readPanel, updatePanel, deletePanel, crudPanel, delete_detail_Panel, optPanel;
-    JButton homeButton, settingButton, sellButton, searchButton, createButton, readButton, updateButton, deleteButton, submitButton, search_setting_Button, search_update_Button, submit_update_Button, upload_update_Button, search_delete_Button, submit_sell_Button ;
+    JPanel panelmain, panelleft, panelright, panelrighthome, panelrightsetting, panelrightsell, createPanel, readPanel, updatePanel, deletePanel, crudPanel, delete_detail_Panel, optPanel, panelrightlogin;
+    JButton homeButton, settingButton, sellButton, searchButton, createButton, readButton, updateButton, deleteButton, submitButton, search_setting_Button, search_update_Button, submit_update_Button, upload_update_Button, search_delete_Button, submit_sell_Button, uploadButton, loginButton, logoutButton, submit_login_Button ;
     JRadioButton id, name, author, category, price, amount;
     CardLayout rightLayout = new CardLayout(),optLayout;
-    TextField searchArea, settingArea ;
-    JTextField search_setting_Area, name_Field, author_Field, category_Field, price_Field, amount_Field, name_update_Field, id_update_Field, author_update_Field, category_update_Field, price_update_Field, amount_update_Field, id_delete_Field;
+    TextField searchArea, settingArea;
+    JTextField search_setting_Area, name_Field, author_Field, category_Field, price_Field, amount_Field, name_update_Field, id_update_Field, author_update_Field, category_update_Field, price_update_Field, amount_update_Field, id_delete_Field, userField;
+    JPasswordField passwordField;
     String path="";
     File selectedimageFile;
-    JLabel update_status, delete_status, status_sell_Lable;
+    JLabel update_status, delete_status, status_sell_Lable, login_status;
     DefaultTableModel model_create =new DefaultTableModel(new Object[][] {},new String[] {}) 
                     {
                         Class[] columnTypes = new Class[] {
@@ -77,6 +78,7 @@ public class Main extends JFrame implements ActionListener{
     JFrame message = new JFrame("message");
     JTable table_sell;
     int selling=0;
+    boolean check_login = false;
 
     public void GUI() {
         System.out.println(dataConnect.login("staff1", "111"));
@@ -119,6 +121,26 @@ public class Main extends JFrame implements ActionListener{
             sellButton.setBackground(new Color(240, 238, 227));
             sellButton.setBorderPainted(false);
             panelleft.add(sellButton);
+
+            imageIcon = new ImageIcon("image/login.png");
+            image = imageIcon.getImage();
+            image = image.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+            imageIcon.setImage(image);
+            loginButton = new JButton(imageIcon);
+            loginButton.setPreferredSize(new Dimension(100, 50));
+            loginButton.setBackground(new Color(240, 238, 227));
+            loginButton.setBorderPainted(false);
+            panelleft.add(loginButton);
+
+            imageIcon = new ImageIcon("image/logout.png");
+            image = imageIcon.getImage();
+            image = image.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+            imageIcon.setImage(image);
+            logoutButton = new JButton(imageIcon);
+            logoutButton.setPreferredSize(new Dimension(100, 50));
+            logoutButton.setBackground(new Color(240, 238, 227));
+            logoutButton.setBorderPainted(false);
+            
 
 
         // right panel
@@ -658,7 +680,7 @@ public class Main extends JFrame implements ActionListener{
                 url_panel.setPreferredSize(new Dimension(1200, 160));
                 url_panel.setBackground(new Color(240, 238, 227));
                 create_detail_Panel.add(url_panel);
-                JButton uploadButton = new JButton("Upload");
+                uploadButton = new JButton("Upload");
                 uploadButton.setPreferredSize(new Dimension(150, 150));
                 uploadButton.setCursor(new Cursor(12));
                 uploadButton.setFont(new Font("Semibold", Font.PLAIN, 15));
@@ -999,14 +1021,92 @@ public class Main extends JFrame implements ActionListener{
                 table_sell.setPreferredScrollableViewportSize(new Dimension(800, 500));
                 table_sell.setRowHeight(25);
                 
+                //////////////////// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                panelrightlogin = new JPanel(new FlowLayout());
+                panelrightlogin.setBackground(new Color(240, 238, 227));
+                
+                JPanel loginPanel = new JPanel();
+                loginPanel.setPreferredSize(new Dimension(350, 400));
+                loginPanel.setBackground(new Color(201, 195, 159));
+                loginPanel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.WHITE));
+                panelrightlogin.add(loginPanel, BorderLayout.CENTER);
+
+                JLabel loginLabel = new JLabel("Đăng nhập");
+                loginLabel.setPreferredSize(new Dimension(170, 100));
+                loginLabel.setBackground(new Color(201, 195, 159));
+                loginLabel.setFont(new Font("Semibold", Font.BOLD, 30));
+                loginPanel.add(loginLabel);
+
+                JPanel detail_login = new JPanel(new GridLayout(2, 2));
+                detail_login.setBackground(new Color(201, 195, 159));
+                detail_login.setPreferredSize(new Dimension(345, 80));
+                detail_login.setBorder(null);
+                loginPanel.add(detail_login);
+
+                JLabel user = new JLabel("Username: ");
+                user.setBackground(new Color(201, 195, 159));
+                detail_login.add(user);
+                userField = new JTextField();
+                userField.setFont(new Font("Semibold", Font.PLAIN, 18));
+                detail_login.add(userField);
+                JLabel password = new JLabel("Password: ");
+                password.setBackground(new Color(201, 195, 159));
+                detail_login.add(password);
+                passwordField = new JPasswordField();
+                passwordField.setFont(new Font("Semibold", Font.PLAIN, 18));
+                detail_login.add(passwordField);
+
+                JPanel submit_login_Panel = new JPanel(new FlowLayout());
+                submit_login_Panel.setPreferredSize(new Dimension(345, 50));
+                submit_login_Panel.setBackground(new Color(201, 195, 159));
+                loginPanel.add(submit_login_Panel);
+                submit_login_Button = new JButton("Login");
+                submit_login_Button.setFont(new Font("Semibold", Font.PLAIN, 18));
+                submit_login_Panel.add(submit_login_Button);
+                submit_login_Button.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        check_login = dataConnect.login(userField.getText(), String.copyValueOf(passwordField.getPassword()));
+                        if (check_login == false) 
+                        {
+                            login_status.setText("Thông tin đăng nhập không đúng");
+                        }
+                        else {
+                            login_status.setText("");
+                            passwordField.setText("");
+                            userField.setText("");
+                            rightLayout.show(panelright, "panelrighthome");
+                            panelleft.add(logoutButton);
+                            panelleft.remove(loginButton);
+                        }
+                    }
+                    
+                });
+                    
+                login_status = new JLabel("");
+                login_status.setBackground(new Color(201, 195, 159));
+                login_status.setFont(new Font("Semibold", Font.ITALIC, 15));
+                loginPanel.add(login_status);
+
+                
+
+
+            
 
 
 
+
+
+
+
+            ////////////////////// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             panelright = new JPanel();
             panelright.setLayout(rightLayout);
             panelright.add(panelrighthome, "panelrighthome");
             panelright.add(panelrightsetting, "panelrightsetting");
             panelright.add(panelrightsell,"panelrightsell");
+            panelright.add(panelrightlogin,"panelrightlogin");
             
             rightLayout.show(panelright, "panelrighthome");
 
@@ -1014,9 +1114,7 @@ public class Main extends JFrame implements ActionListener{
             @Override
             public void actionPerformed(ActionEvent e) {
                 rightLayout.show(panelright, "panelrighthome");
-
-//                resultPanel.setPreferredSize(new Dimension(1100,105*resultPanel.getComponentCount()));
-                 add_all_bookui(resultPanel);
+                add_all_bookui(resultPanel);
             }
             
         });
@@ -1024,16 +1122,39 @@ public class Main extends JFrame implements ActionListener{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                rightLayout.show(panelright, "panelrightsetting");
-                optLayout.show(optPanel, "crudPanel");
-            }
-            
+                if (check_login == true){
+                    rightLayout.show(panelright, "panelrightsetting");
+                    optLayout.show(optPanel, "crudPanel");
+                }
+                else rightLayout.show(panelright, "panelrightlogin");
+        }
         });
         sellButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                rightLayout.show(panelright, "panelrightsell");
+                if (check_login == true){
+                    rightLayout.show(panelright, "panelrightsell");
+                }
+                else rightLayout.show(panelright, "panelrightlogin");
+            }
+        });
+        loginButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                rightLayout.show(panelright, "panelrightlogin");
+            }
+            
+        });
+        logoutButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                check_login = false;
+                rightLayout.show(panelright, "panelrighthome");
+                panelleft.add(loginButton);
+                panelleft.remove(logoutButton);
             }
             
         });
@@ -1069,10 +1190,13 @@ public class Main extends JFrame implements ActionListener{
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println(label.getLabel());
-                rightLayout.show(panelright, "panelrightsetting");
-                optLayout.show(optPanel, "updatePanel");
-                id_update_Field.setText(label.getLabel());
-                active_update();
+                    if (check_login == true){
+                    rightLayout.show(panelright, "panelrightsetting");
+                    optLayout.show(optPanel, "updatePanel");
+                    id_update_Field.setText(label.getLabel());
+                    active_update();
+                }
+                else rightLayout.show(panelright, "panelrightlogin");
             }
             
         });
@@ -1156,6 +1280,12 @@ public class Main extends JFrame implements ActionListener{
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
+                name_Field.setText("");
+                author_Field.setText("");
+                category_Field.setText("");
+                amount_Field.setText("");
+                price_Field.setText("");
+                uploadButton.setIcon(null);
                 List<Book> bookList = dataConnect.getBookList();
                 selling_update(model_sell, bookList);
                 add_book_table(model_read, bookList);
@@ -1246,6 +1376,13 @@ public class Main extends JFrame implements ActionListener{
         boolean checkupdate = dataConnect.updateBook(book);
         if (checkupdate == true){
             update_status.setText("Cập nhật thành công");
+            id_update_Field.setText("");
+            name_update_Field.setText("");
+            author_update_Field.setText("");
+            category_update_Field.setText("");
+            price_update_Field.setText("");
+            amount_update_Field.setText("");
+            upload_update_Button.setIcon(null);
             BufferedImage img;
                 try {
                     img = ImageIO.read(selectedimageFile);
