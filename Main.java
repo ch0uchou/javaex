@@ -15,7 +15,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import com.mysql.fabric.xmlrpc.base.Data;
 
 import java.util.ArrayList;
 import java.util.EventObject;
