@@ -438,6 +438,7 @@ public class Main extends JFrame implements ActionListener{
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        selectedimageFile = null;
                         JFileChooser file = new JFileChooser(System.getProperty("user.dir"));
                         file.setMultiSelectionEnabled(false);
                         FileNameExtensionFilter filter = new FileNameExtensionFilter("*.Images","jpg","gif","png");
@@ -687,6 +688,7 @@ public class Main extends JFrame implements ActionListener{
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        selectedimageFile = null;
                         JFileChooser file = new JFileChooser(System.getProperty("user.dir"));
                         file.setMultiSelectionEnabled(false);
                         FileNameExtensionFilter filter = new FileNameExtensionFilter("*.Images","jpg","gif","png");
@@ -1088,17 +1090,6 @@ public class Main extends JFrame implements ActionListener{
                 login_status.setFont(new Font("Semibold", Font.ITALIC, 15));
                 loginPanel.add(login_status);
 
-                
-
-
-            
-
-
-
-
-
-
-
             ////////////////////// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             panelright = new JPanel();
             panelright.setLayout(rightLayout);
@@ -1270,6 +1261,7 @@ public class Main extends JFrame implements ActionListener{
         Boolean checkcreate = dataConnect.createBook(newbook);
         if (checkcreate){
                 BufferedImage img;
+                if (selectedimageFile != null)
                 try {
                     img = ImageIO.read(selectedimageFile);
                     File newfile = new File("image/b"+Integer.toString(dataConnect.FindBookid())+".png");
@@ -1363,15 +1355,16 @@ public class Main extends JFrame implements ActionListener{
     }
 
     public void update_book() {
-        Book book = new Book(
-            Integer.parseInt(id_update_Field.getText()),
-            name_update_Field.getText(),
-            author_update_Field.getText(),
-            category_update_Field.getText(),
-            "image/b"+id_update_Field.getText()+".png",
-            Integer.parseInt(price_update_Field.getText()),
-            Integer.parseInt(amount_update_Field.getText())
-        );
+        Book book;
+            book = new Book(
+                Integer.parseInt(id_update_Field.getText()),
+                name_update_Field.getText(),
+                author_update_Field.getText(),
+                category_update_Field.getText(),
+                "image/b"+id_update_Field.getText()+".png",
+                Integer.parseInt(price_update_Field.getText()),
+                Integer.parseInt(amount_update_Field.getText())
+            );
         boolean checkupdate = dataConnect.updateBook(book);
         if (checkupdate == true){
             update_status.setText("Cập nhật thành công");

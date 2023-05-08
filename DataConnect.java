@@ -29,7 +29,14 @@ public class DataConnect {
 			ResultSetMetaData rsmd=rs.getMetaData();
             List<Book> bookList = new ArrayList<Book>();
 			while(rs.next()) {
-                Book book = new Book(Integer.parseInt(rs.getObject(1).toString()),rs.getObject(2).toString(),rs.getObject(3).toString(),rs.getObject(4).toString(),rs.getObject(5).toString(),Integer.parseInt(rs.getObject(6).toString()),Integer.parseInt(rs.getObject(7).toString()));
+                Book book = new Book(
+                    Integer.parseInt(rs.getObject(1).toString()),
+                    rs.getObject(2).toString(),
+                    rs.getObject(3).toString(),
+                    rs.getObject(4).toString(),
+                    rs.getObject(5).toString(),
+                    Integer.parseInt(rs.getObject(6).toString()),
+                    Integer.parseInt(rs.getObject(7).toString()));
                 bookList.add(book);
 //                System.out.println(Integer.parseInt(""+rs.getObject(1).toString())+rs.getObject(2).toString()+rs.getObject(3).toString()+rs.getObject(4).toString()+rs.getObject(5).toString()+Integer.parseInt(rs.getObject(6).toString())+Integer.parseInt(rs.getObject(7).toString()));
 			}
@@ -53,7 +60,14 @@ public class DataConnect {
 			ResultSetMetaData rsmd=rs.getMetaData();
             List<Book> bookList = new ArrayList<Book>();
 			while(rs.next()) {
-                Book book = new Book(Integer.parseInt(rs.getObject(1).toString()),rs.getObject(2).toString(),rs.getObject(3).toString(),rs.getObject(4).toString(),rs.getObject(5).toString(),Integer.parseInt(rs.getObject(6).toString()),Integer.parseInt(rs.getObject(7).toString()));
+                Book book = new Book(
+                    Integer.parseInt(rs.getObject(1).toString()),
+                    rs.getObject(2).toString(),
+                    rs.getObject(3).toString(),
+                    rs.getObject(4).toString(),
+                    rs.getObject(5).toString(),
+                    Integer.parseInt(rs.getObject(6).toString()),
+                    Integer.parseInt(rs.getObject(7).toString()));
                 bookList.add(book);
 			}
 			rs.close();
@@ -70,7 +84,7 @@ public class DataConnect {
         try {
             Statement stmt = con.createStatement();
             int count = FindBookid() + 1;
-            String sql = "INSERT INTO book VALUES (" + count + ",'" + book.get_name() + "', '" + book.get_author() + "', '" + book.get_category() + "', 'image/b" +count + ".png', " + book.get_price() + ", " + book.get_amount() + ")";
+            String sql = "INSERT INTO book VALUES (" + count + ",'" + book.get_name() + "', '" + book.get_author() + "', '" + book.get_category() + "', '" +book.get_url() + "', " + book.get_price() + ", " + book.get_amount() + ")";
             int result = stmt.executeUpdate(sql);
             stmt.close();
             return true;
